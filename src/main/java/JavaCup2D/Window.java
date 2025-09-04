@@ -91,7 +91,7 @@ public class Window {
         float dt = -1.0f;
         while(!glfwWindowShouldClose(windowPointer)) {
             glfwPollEvents();
-            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             if(dt >= 0)
                 currentScene.update(dt);

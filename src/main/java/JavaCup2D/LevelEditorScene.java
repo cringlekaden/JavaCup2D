@@ -1,6 +1,7 @@
 package JavaCup2D;
 
 import Components.Sprite;
+import Util.AssetPool;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -12,7 +13,7 @@ public class LevelEditorScene extends Scene {
 
     @Override
     protected void init() {
-        this.camera = new Camera(new Vector2f());
+        this.camera = new Camera(new Vector2f(-250, 0));
         int xOffset = 10;
         int yOffset = 10;
         float totalWidth = (float)(600 - xOffset * 2);
@@ -29,6 +30,7 @@ public class LevelEditorScene extends Scene {
                 this.addEntityToScene(go);
             }
         }
+        loadResources();
     }
 
     @Override
@@ -37,5 +39,10 @@ public class LevelEditorScene extends Scene {
         for(Entity e : entities)
             e.update(dt);
         renderer.render();
+    }
+
+    private void loadResources() {
+        AssetPool.getShader("default");
+        AssetPool.getTexture("testImage.png");
     }
 }

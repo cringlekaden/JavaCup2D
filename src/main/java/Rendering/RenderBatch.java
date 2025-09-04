@@ -2,6 +2,7 @@ package Rendering;
 
 import Components.Sprite;
 import JavaCup2D.Window;
+import Util.AssetPool;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
@@ -29,7 +30,7 @@ public class RenderBatch {
 
     public RenderBatch(int maxBatchSize) {
         this.maxBatchSize = maxBatchSize;
-        shader = new Shader("default");
+        shader = AssetPool.getShader("default");
         sprites = new Sprite[maxBatchSize];
         vertices = new float[maxBatchSize * 4 * VERTEX_SIZE];
         numSprites = 0;
