@@ -1,5 +1,6 @@
 package JavaCup2D;
 
+import Util.Time;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -13,6 +14,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
 
     private static Window instance;
+    private static Scene currentScene = null;
 
     private String title;
     private int width, height;
@@ -28,6 +30,18 @@ public class Window {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        String os = System.getProperty("os.name", "").toLowerCase();
+        if (os.contains("mac")) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        } else {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        }
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         windowPointer = glfwCreateWindow(width, height, title, NULL, NULL);
         if(windowPointer == NULL)
             throw new IllegalStateException("GLFW window creation failed...");
@@ -39,6 +53,21 @@ public class Window {
         glfwSwapInterval(1);
         glfwShowWindow(windowPointer);
         GL.createCapabilities();
+        Window.changeScene(0);
+    }
+
+    public static void changeScene(int scene) {
+        switch (scene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false : "Invalid scene: " + scene + "...";
+                break;
+        }
     }
 
     public static Window getInstance() {
@@ -49,20 +78,23 @@ public class Window {
 
     public void run() {
         System.out.println("LWJGL Version: " + Version.getVersion());
+        float beginTime = Time.getTime();
+        float endTime;
+        float dt = -1.0f;
         while(!glfwWindowShouldClose(windowPointer)) {
             glfwPollEvents();
-            if(KeyListener.keyPressed(GLFW_KEY_SPACE))
-                System.out.println("Spacebar pressed!");
             glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
+            if(dt >= 0)
+                currentScene.update(dt);
             glfwSwapBuffers(windowPointer);
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
         }
         glfwFreeCallbacks(windowPointer);
         glfwDestroyWindow(windowPointer);
         glfwTerminate();
         glfwSetErrorCallback(null).free();
-
     }
-
-
 }
