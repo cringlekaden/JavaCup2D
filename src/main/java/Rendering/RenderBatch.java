@@ -3,6 +3,9 @@ package Rendering;
 import Components.Sprite;
 import JavaCup2D.Window;
 import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -17,7 +20,6 @@ public class RenderBatch {
     private final int COLOR_OFFSET = POSITION_OFFSET + POSITION_SIZE * Float.BYTES;
     private final int VERTEX_SIZE = 6;
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
-    private final int COLOR_SIZE_BYTES = COLOR_SIZE * Float.BYTES;
 
     private Sprite[] sprites;
     private Shader shader;
@@ -39,15 +41,17 @@ public class RenderBatch {
         glBindVertexArray(vaoID);
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, (long) vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
         int iboID = glGenBuffers();
         int[] indices = generateIndices();
+        IntBuffer intBuffer = BufferUtils.createIntBuffer(indices.length);
+        intBuffer.put(indices).flip();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(0, POSITION_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, POSITION_OFFSET);
-        glVertexAttribPointer(1, COLOR_SIZE, GL_FLOAT, false, COLOR_SIZE_BYTES, COLOR_OFFSET);
+        glVertexAttribPointer(1, COLOR_SIZE, GL_FLOAT, false, VERTEX_SIZE_BYTES, COLOR_OFFSET);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(0);
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Renderer {
 
-    private final int MAX_BATCH_SIZE = 50000;
+    private final int MAX_BATCH_SIZE = 1000;
 
     private List<RenderBatch> batches;
 

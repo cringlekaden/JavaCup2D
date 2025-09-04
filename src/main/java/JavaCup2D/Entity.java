@@ -1,14 +1,11 @@
 package JavaCup2D;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 public class Entity {
 
     private String name;
     private List<Component> components;
-
     public Transform transform;
 
     public Entity(String name) {

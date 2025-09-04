@@ -1,10 +1,10 @@
 #version 410 core
 
-uniform mat4 uProjection;
-uniform mat4 uView;
-
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec4 vColor;
+
+uniform mat4 uProjection;
+uniform mat4 uView;
 
 out vec4 fColor;
 

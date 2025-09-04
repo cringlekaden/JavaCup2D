@@ -12,20 +12,21 @@ public class LevelEditorScene extends Scene {
 
     @Override
     protected void init() {
-        camera = new Camera(new Vector2f());
+        this.camera = new Camera(new Vector2f());
         int xOffset = 10;
         int yOffset = 10;
-        float width = (float) (600 - xOffset * 2);
-        float height = (float) (300 - yOffset * 2);
-        float sizeX = width / 100.0f;
-        float sizeY = height / 100.0f;
-        for(int x = 0; x < 100; x++) {
-            for(int y = 0; y < 100; y++) {
-                float xPos = xOffset + (x * sizeX);
-                float yPos = yOffset + (y * sizeY);
-                Entity entity = new Entity("Object" + x + y, new Transform(new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
-                entity.addComponent(new Sprite(new Vector4f(xPos / width, yPos / height, 1, 1)));
-                addEntityToScene(entity);
+        float totalWidth = (float)(600 - xOffset * 2);
+        float totalHeight = (float)(300 - yOffset * 2);
+        float sizeX = totalWidth / 100.0f;
+        float sizeY = totalHeight / 100.0f;
+        float padding = 0;
+        for (int x=0; x < 100; x++) {
+            for (int y = 0; y < 100; y++) {
+                float xPos = xOffset + (x * sizeX) + (padding * x);
+                float yPos = yOffset + (y * sizeY) + (padding * y);
+                Entity go = new Entity("Obj" + x + "" + y, new Transform(new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
+                go.addComponent(new Sprite(new Vector4f(xPos / totalWidth, yPos / totalHeight, 1, 1)));
+                this.addEntityToScene(go);
             }
         }
     }
