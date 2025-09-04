@@ -14,8 +14,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
 
     private static Window instance;
-    private static Scene currentScene = null;
 
+    private Scene currentScene = null;
     private String title;
     private int width, height;
     private long windowPointer;
@@ -59,15 +59,23 @@ public class Window {
     public static void changeScene(int scene) {
         switch (scene) {
             case 0:
-                currentScene = new LevelEditorScene();
+                getInstance().currentScene = new LevelEditorScene();
+                getInstance().currentScene.init();
+                getInstance().currentScene.start();
                 break;
             case 1:
-                currentScene = new LevelScene();
+                getInstance().currentScene = new LevelScene();
+                getInstance().currentScene.init();
+                getInstance().currentScene.start();
                 break;
             default:
                 assert false : "Invalid scene: " + scene + "...";
                 break;
         }
+    }
+
+    public static Scene getScene() {
+        return getInstance().currentScene;
     }
 
     public static Window getInstance() {
