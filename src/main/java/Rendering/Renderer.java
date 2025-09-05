@@ -31,16 +31,19 @@ public class Renderer {
         boolean added = false;
         for(RenderBatch batch : batches) {
             if(!batch.isFull()) {
-                batch.addSprite(sprite);
-                added = true;
-                break;
+                Texture texture = sprite.getTexture();
+                if(texture == null || batch.hasTexture(texture) || !batch.isAtTextureLimit()) {
+                    batch.addSprite(sprite);
+                    added = true;
+                    break;
+                }
             }
         }
         if(!added) {
             RenderBatch batch = new RenderBatch(MAX_BATCH_SIZE);
             batch.start();
-            batch.addSprite(sprite);
             batches.add(batch);
+            batch.addSprite(sprite);
         }
     }
 }

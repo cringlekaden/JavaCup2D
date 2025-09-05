@@ -1,8 +1,6 @@
 package JavaCup2D;
 
-import Util.Time;
 import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -86,7 +84,7 @@ public class Window {
 
     public void run() {
         System.out.println("LWJGL Version: " + Version.getVersion());
-        float beginTime = Time.getTime();
+        float beginTime = (float)glfwGetTime();
         float endTime;
         float dt = -1.0f;
         while(!glfwWindowShouldClose(windowPointer)) {
@@ -96,7 +94,7 @@ public class Window {
             if(dt >= 0)
                 currentScene.update(dt);
             glfwSwapBuffers(windowPointer);
-            endTime = Time.getTime();
+            endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
         }

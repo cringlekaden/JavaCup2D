@@ -4,7 +4,9 @@ import org.joml.*;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -71,9 +73,14 @@ public class Shader {
         glUniform1i(glGetUniformLocation(programID, name), value);
     }
 
-    public void setTextureSlot(String name, int slot) {
+    public void setTextureSlot(String name, int texSlot) {
         bind();
-        glUniform1i(glGetUniformLocation(programID, name), slot);
+        glUniform1i(glGetUniformLocation(programID, name), texSlot);
+    }
+
+    public void setTextureSlot(String name, int[] texSlots) {
+        bind();
+        glUniform1iv(glGetUniformLocation(programID, name), texSlots);
     }
 
     private void compile() {
