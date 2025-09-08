@@ -1,6 +1,6 @@
 package Rendering;
 
-import Components.Sprite;
+import Components.Sprites.SpriteRenderer;
 import JavaCup2D.Window;
 import Util.AssetPool;
 import org.joml.Vector4f;
@@ -29,7 +29,7 @@ public class RenderBatch {
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
     private List<Texture> textures;
-    private Sprite[] sprites;
+    private SpriteRenderer[] spriteRenderers;
     private Shader shader;
     private int numSprites, vaoID, vboID, maxBatchSize;
     private float[] vertices;
@@ -39,7 +39,7 @@ public class RenderBatch {
     public RenderBatch(int maxBatchSize) {
         this.maxBatchSize = maxBatchSize;
         shader = AssetPool.getShader("default");
-        sprites = new Sprite[maxBatchSize];
+        spriteRenderers = new SpriteRenderer[maxBatchSize];
         vertices = new float[maxBatchSize * 4 * VERTEX_SIZE];
         textures = new ArrayList<>();
         numSprites = 0;
@@ -69,8 +69,19 @@ public class RenderBatch {
     }
 
     public void render() {
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+        boolean needsRebuffer = false;
+        for(int i = 0; i < numSprites; i++) {
+            SpriteRenderer sprite = spriteRenderers[i];
+            if(sprite.isDirty()) {
+                loadVertexProperties(i);
+                sprite.isClean();
+                needsRebuffer = true;
+            }
+        }
+        if(needsRebuffer) {
+            glBindBuffer(GL_ARRAY_BUFFER, vboID);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+        }
         shader.bind();
         shader.setUniform("uProjection", Window.getScene().getCamera().getProjection());
         shader.setUniform("uView", Window.getScene().getCamera().getView());
@@ -94,13 +105,13 @@ public class RenderBatch {
         shader.unbind();
     }
 
-    public void addSprite(Sprite sprite) {
+    public void addSprite(SpriteRenderer spriteRenderer) {
         int index = numSprites;
-        sprites[index] = sprite;
+        spriteRenderers[index] = spriteRenderer;
         numSprites++;
-        if(sprite.getTexture() != null)
-            if(!textures.contains(sprite.getTexture()))
-                textures.add(sprite.getTexture());
+        if(spriteRenderer.getTexture() != null)
+            if(!textures.contains(spriteRenderer.getTexture()))
+                textures.add(spriteRenderer.getTexture());
         loadVertexProperties(index);
         if(numSprites >= maxBatchSize)
             isFull = true;
@@ -119,13 +130,13 @@ public class RenderBatch {
     }
 
     private void loadVertexProperties(int index) {
-        Sprite sprite = sprites[index];
+        SpriteRenderer spriteRenderer = spriteRenderers[index];
         int offset = index * 4 * VERTEX_SIZE;
-        Vector4f color = sprite.getColor();
+        Vector4f color = spriteRenderer.getColor();
         int texID = 0;
-        if(sprite.getTexture() != null) {
+        if(spriteRenderer.getTexture() != null) {
             for (int i = 0; i < textures.size(); i++) {
-                if(textures.get(i) == sprite.getTexture()) {
+                if(textures.get(i) == spriteRenderer.getTexture()) {
                     texID = i + 1;
                     break;
                 }
@@ -137,14 +148,14 @@ public class RenderBatch {
             if(i == 1) yAdd = 0.0f;
             if(i == 2) xAdd = 0.0f;
             if(i == 3) yAdd = 1.0f;
-            vertices[offset] = sprite.entity.transform.position.x + (xAdd * sprite.entity.transform.scale.x);
-            vertices[offset + 1] = sprite.entity.transform.position.y + (yAdd * sprite.entity.transform.scale.y);
+            vertices[offset] = spriteRenderer.entity.transform.position.x + (xAdd * spriteRenderer.entity.transform.scale.x);
+            vertices[offset + 1] = spriteRenderer.entity.transform.position.y + (yAdd * spriteRenderer.entity.transform.scale.y);
             vertices[offset + 2] = color.x;
             vertices[offset + 3] = color.y;
             vertices[offset + 4] = color.z;
             vertices[offset + 5] = color.w;
-            vertices[offset + 6] = sprite.getTexCoords()[i].x;
-            vertices[offset + 7] = sprite.getTexCoords()[i].y;
+            vertices[offset + 6] = spriteRenderer.getTexCoords()[i].x;
+            vertices[offset + 7] = spriteRenderer.getTexCoords()[i].y;
             vertices[offset + 8] = texID;
             offset += VERTEX_SIZE;
         }

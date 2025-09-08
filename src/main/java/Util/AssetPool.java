@@ -1,5 +1,6 @@
 package Util;
 
+import Components.Sprites.Spritesheet;
 import Rendering.Shader;
 import Rendering.Texture;
 
@@ -11,6 +12,7 @@ public class AssetPool {
 
     private static Map<String, Shader> shaders = new HashMap<>();
     private static Map<String, Texture> textures = new HashMap<>();
+    private static Map<String, Spritesheet> spritesheets = new HashMap<>();
 
     public static Shader getShader(String name) {
         if(shaders.containsKey(name))
@@ -30,5 +32,18 @@ public class AssetPool {
             textures.put(name, texture);
             return texture;
         }
+    }
+
+    public static void addSpritesheet(String name, Spritesheet spritesheet) {
+        if(!spritesheets.containsKey(name))
+            spritesheets.put(name, spritesheet);
+    }
+
+    public static Spritesheet getSpriteSheet(String name) {
+        if(spritesheets.containsKey(name))
+            return spritesheets.get(name);
+        else
+            assert false : "Error: Spritesheet not in AssetPool " + name + "...";
+        return null;
     }
 }

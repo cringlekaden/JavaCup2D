@@ -11,7 +11,7 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
 
     private String filename;
-    private int textureID;
+    private int textureID, width, height;
 
     public Texture(String filename) {
         this.filename = filename;
@@ -27,6 +27,8 @@ public class Texture {
         stbi_set_flip_vertically_on_load(true);
         ByteBuffer image = stbi_load("./assets/textures/"+filename, width, height, channels, 0);
         if(image != null) {
+            this.width = width.get(0);
+            this.height = height.get(0);
             if(channels.get(0) == 4)
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(0), height.get(0), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
             else if(channels.get(0) == 3)
@@ -49,5 +51,17 @@ public class Texture {
 
     public int getTextureID() {
         return textureID;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

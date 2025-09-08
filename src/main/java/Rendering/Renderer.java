@@ -1,6 +1,6 @@
 package Rendering;
 
-import Components.Sprite;
+import Components.Sprites.SpriteRenderer;
 import JavaCup2D.Entity;
 
 import java.util.ArrayList;
@@ -22,18 +22,18 @@ public class Renderer {
     }
 
     public void add(Entity entity) {
-        Sprite sprite = entity.getComponent(Sprite.class);
-        if(sprite != null)
-            add(sprite);
+        SpriteRenderer spriteRenderer = entity.getComponent(SpriteRenderer.class);
+        if(spriteRenderer != null)
+            add(spriteRenderer);
     }
 
-    public void add(Sprite sprite) {
+    public void add(SpriteRenderer spriteRenderer) {
         boolean added = false;
         for(RenderBatch batch : batches) {
             if(!batch.isFull()) {
-                Texture texture = sprite.getTexture();
+                Texture texture = spriteRenderer.getTexture();
                 if(texture == null || batch.hasTexture(texture) || !batch.isAtTextureLimit()) {
-                    batch.addSprite(sprite);
+                    batch.addSprite(spriteRenderer);
                     added = true;
                     break;
                 }
@@ -43,7 +43,7 @@ public class Renderer {
             RenderBatch batch = new RenderBatch(MAX_BATCH_SIZE);
             batch.start();
             batches.add(batch);
-            batch.addSprite(sprite);
+            batch.addSprite(spriteRenderer);
         }
     }
 }
