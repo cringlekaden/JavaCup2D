@@ -3,6 +3,7 @@ package Rendering;
 import Components.Sprites.SpriteRenderer;
 import JavaCup2D.Window;
 import Util.AssetPool;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
@@ -15,7 +16,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class RenderBatch {
+public class RenderBatch implements Comparable<RenderBatch> {
 
     private final int POSITION_SIZE = 2;
     private final int COLOR_SIZE = 4;
@@ -31,13 +32,14 @@ public class RenderBatch {
     private List<Texture> textures;
     private SpriteRenderer[] spriteRenderers;
     private Shader shader;
-    private int numSprites, vaoID, vboID, maxBatchSize;
+    private int numSprites, vaoID, vboID, maxBatchSize, zIndex;
     private float[] vertices;
     private int[] texSlots = {0, 1, 2, 3, 4, 5, 6, 7};
     private boolean isFull;
 
-    public RenderBatch(int maxBatchSize) {
+    public RenderBatch(int maxBatchSize, int zIndex) {
         this.maxBatchSize = maxBatchSize;
+        this.zIndex = zIndex;
         shader = AssetPool.getShader("default");
         spriteRenderers = new SpriteRenderer[maxBatchSize];
         vertices = new float[maxBatchSize * 4 * VERTEX_SIZE];
@@ -129,6 +131,10 @@ public class RenderBatch {
         return textures.contains(texture);
     }
 
+    public int zIndex() {
+        return zIndex;
+    }
+
     private void loadVertexProperties(int index) {
         SpriteRenderer spriteRenderer = spriteRenderers[index];
         int offset = index * 4 * VERTEX_SIZE;
@@ -177,5 +183,10 @@ public class RenderBatch {
         elements[offsetArrayIndex + 3] = offset;
         elements[offsetArrayIndex + 4] = offset + 2;
         elements[offsetArrayIndex + 5] = offset + 1;
+    }
+
+    @Override
+    public int compareTo(@NotNull RenderBatch o) {
+        return Integer.compare(zIndex, o.zIndex());
     }
 }

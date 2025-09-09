@@ -4,6 +4,7 @@ import Components.Sprites.SpriteRenderer;
 import JavaCup2D.Entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Renderer {
@@ -30,7 +31,7 @@ public class Renderer {
     public void add(SpriteRenderer spriteRenderer) {
         boolean added = false;
         for(RenderBatch batch : batches) {
-            if(!batch.isFull()) {
+            if(!batch.isFull() && batch.zIndex() == spriteRenderer.entity.zIndex()) {
                 Texture texture = spriteRenderer.getTexture();
                 if(texture == null || batch.hasTexture(texture) || !batch.isAtTextureLimit()) {
                     batch.addSprite(spriteRenderer);
@@ -40,10 +41,11 @@ public class Renderer {
             }
         }
         if(!added) {
-            RenderBatch batch = new RenderBatch(MAX_BATCH_SIZE);
+            RenderBatch batch = new RenderBatch(MAX_BATCH_SIZE, spriteRenderer.entity.zIndex());
             batch.start();
             batches.add(batch);
             batch.addSprite(spriteRenderer);
+            Collections.sort(batches);
         }
     }
 }

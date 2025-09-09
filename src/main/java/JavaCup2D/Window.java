@@ -14,6 +14,7 @@ public class Window {
     private static Window instance;
     private static Scene currentScene;
 
+    private ImGuiLayer imGuiLayer;
     private String title;
     private int width, height;
     private long windowPointer;
@@ -51,6 +52,10 @@ public class Window {
         glfwSwapInterval(1);
         glfwShowWindow(windowPointer);
         GL.createCapabilities();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        imGuiLayer = new ImGuiLayer(windowPointer);
+        imGuiLayer.init();
         Window.changeScene(0);
     }
 
@@ -89,18 +94,28 @@ public class Window {
         float dt = -1.0f;
         while(!glfwWindowShouldClose(windowPointer)) {
             glfwPollEvents();
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             if(dt >= 0)
                 currentScene.update(dt);
+            imGuiLayer.update(dt, currentScene);
             glfwSwapBuffers(windowPointer);
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
         }
+        imGuiLayer.destroyImGui();
         glfwFreeCallbacks(windowPointer);
         glfwDestroyWindow(windowPointer);
         glfwTerminate();
         glfwSetErrorCallback(null).free();
+    }
+
+    public static int getWidth() {
+        return getInstance().width;
+    }
+
+    public static int getHeight() {
+        return getInstance().height;
     }
 }

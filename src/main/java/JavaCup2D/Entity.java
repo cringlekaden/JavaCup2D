@@ -6,18 +6,21 @@ public class Entity {
 
     private String name;
     private List<Component> components;
+    private int zIndex;
     public Transform transform;
 
     public Entity(String name) {
         this.name = name;
         components = new ArrayList<>();
         transform = new Transform();
+        zIndex = 0;
     }
 
-    public Entity(String name, Transform transform) {
+    public Entity(String name, Transform transform, int zIndex) {
         this.name = name;
-        components = new ArrayList<>();
         this.transform = transform;
+        this.zIndex = zIndex;
+        components = new ArrayList<>();
     }
 
     public void update(float dt) {
@@ -26,6 +29,11 @@ public class Entity {
 
     public void start() {
         for (Component component : components) component.start();
+    }
+
+    public void imgui() {
+        for(Component c : components)
+            c.imgui();
     }
 
     public void addComponent(Component component) {
@@ -54,5 +62,9 @@ public class Entity {
                 return;
             }
         }
+    }
+
+    public int zIndex() {
+        return zIndex;
     }
 }
