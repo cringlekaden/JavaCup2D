@@ -1,7 +1,7 @@
 package Components.Sprites;
 
-import JavaCup2D.Component;
-import JavaCup2D.Transform;
+import Components.Component;
+import Core.Transform;
 import Rendering.Texture;
 import imgui.ImGui;
 import org.joml.Vector2f;
@@ -9,22 +9,10 @@ import org.joml.Vector4f;
 
 public class SpriteRenderer extends Component {
 
-    private Vector4f color;
-    private Sprite sprite;
-    private Transform lastTransform;
-    private boolean isDirty;
-
-    public SpriteRenderer(Vector4f color) {
-        this.color = color;
-        sprite = new Sprite(null);
-        isDirty = true;
-    }
-
-    public SpriteRenderer(Sprite sprite) {
-        this.sprite = sprite;
-        color = new Vector4f(1, 1, 1, 1);
-        isDirty = true;
-    }
+    private Vector4f color = new Vector4f(1, 1, 1, 1);
+    private Sprite sprite = new Sprite();
+    private transient Transform lastTransform;
+    private transient boolean isDirty = true;
 
     @Override
     public void start() {

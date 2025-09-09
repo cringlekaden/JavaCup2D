@@ -1,7 +1,5 @@
 package Components;
 
-import JavaCup2D.Component;
-
 public class FontRenderer extends Component {
 
     @Override

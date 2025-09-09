@@ -1,7 +1,7 @@
 package Rendering;
 
 import Components.Sprites.SpriteRenderer;
-import JavaCup2D.Entity;
+import Core.Entity;
 
 import java.util.ArrayList;
 import java.util.Collections;

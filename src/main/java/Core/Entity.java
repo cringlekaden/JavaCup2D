@@ -1,4 +1,6 @@
-package JavaCup2D;
+package Core;
+
+import Components.Component;
 
 import java.util.*;
 

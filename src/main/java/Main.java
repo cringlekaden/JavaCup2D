@@ -1,4 +1,4 @@
-import JavaCup2D.Window;
+import Core.Window;
 
 public class Main {
 

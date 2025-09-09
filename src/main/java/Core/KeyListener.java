@@ -1,4 +1,4 @@
-package JavaCup2D;
+package Core;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 

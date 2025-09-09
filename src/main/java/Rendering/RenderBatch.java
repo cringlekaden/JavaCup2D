@@ -1,7 +1,7 @@
 package Rendering;
 
 import Components.Sprites.SpriteRenderer;
-import JavaCup2D.Window;
+import Core.Window;
 import Util.AssetPool;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4f;

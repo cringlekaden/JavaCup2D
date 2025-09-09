@@ -1,4 +1,6 @@
-package JavaCup2D;
+package Core;
+
+import org.joml.Vector4f;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -57,6 +59,24 @@ public class MouseListener {
 
     public static float getY() {
         return (float) getInstance().y;
+    }
+
+    public static float getOrthoX() {
+        float currentX = getX();
+        currentX = (currentX / (float) Window.getWidth() * 2.0f) - 1.0f;
+        Vector4f temp = new Vector4f(currentX, 0, 0, 1);
+        temp.mul(Window.getScene().getCamera().getInverseProjection()).mul(Window.getScene().getCamera().getInverseView());
+        currentX = temp.x;
+        return currentX;
+    }
+
+    public static float getOrthoY() {
+        float currentY = getY();
+        currentY = (currentY / (float) Window.getHeight() * 2.0f) - 1.0f;
+        Vector4f temp = new Vector4f(0, currentY, 0, 1);
+        temp.mul(Window.getScene().getCamera().getInverseProjection()).mul(Window.getScene().getCamera().getInverseView());
+        currentY = temp.y;
+        return currentY;
     }
 
     public static float getDX() {

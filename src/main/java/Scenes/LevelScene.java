@@ -1,4 +1,4 @@
-package JavaCup2D;
+package Scenes;
 
 public class LevelScene extends Scene {
 
@@ -6,7 +6,7 @@ public class LevelScene extends Scene {
     }
 
     @Override
-    protected void init() {
+    public void init() {
 
     }
 

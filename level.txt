@@ -1,0 +1,119 @@
+[
+  {
+    "name": "Test1",
+    "components": [
+      {
+        "type": "Components.Sprites.SpriteRenderer",
+        "properties": {
+          "color": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 1.0,
+            "w": 1.0
+          },
+          "sprite": {
+            "textureCoords": [
+              {
+                "x": 1.0,
+                "y": 1.0
+              },
+              {
+                "x": 1.0,
+                "y": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 1.0
+              }
+            ],
+            "width": 0.0,
+            "height": 0.0
+          }
+        }
+      },
+      {
+        "type": "Components.Rigidbody",
+        "properties": {
+          "numbers": {
+            "x": 1.0,
+            "y": 0.5,
+            "z": 0.123,
+            "w": 1.0
+          },
+          "seven": -25,
+          "floater": 90.1
+        }
+      }
+    ],
+    "zIndex": 0,
+    "transform": {
+      "position": {
+        "x": 200.0,
+        "y": 100.0
+      },
+      "scale": {
+        "x": 256.0,
+        "y": 256.0
+      }
+    }
+  },
+  {
+    "name": "Test2",
+    "components": [
+      {
+        "type": "Components.Sprites.SpriteRenderer",
+        "properties": {
+          "color": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+            "w": 1.0
+          },
+          "sprite": {
+            "texture": {
+              "filename": "blendImage2.png",
+              "textureID": 2,
+              "width": 256,
+              "height": 256
+            },
+            "textureCoords": [
+              {
+                "x": 1.0,
+                "y": 1.0
+              },
+              {
+                "x": 1.0,
+                "y": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 0.0
+              },
+              {
+                "x": 0.0,
+                "y": 1.0
+              }
+            ],
+            "width": 0.0,
+            "height": 0.0
+          }
+        }
+      }
+    ],
+    "zIndex": 1,
+    "transform": {
+      "position": {
+        "x": 400.0,
+        "y": 100.0
+      },
+      "scale": {
+        "x": 256.0,
+        "y": 256.0
+      }
+    }
+  }
+]

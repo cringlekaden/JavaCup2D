@@ -1,4 +1,4 @@
-package JavaCup2D;
+package Core;
 
 import org.joml.Vector2f;
 

@@ -28,7 +28,8 @@ public class AssetPool {
         if(textures.containsKey(name))
             return textures.get(name);
         else {
-            Texture texture = new Texture(name);
+            Texture texture = new Texture();
+            texture.init(name);
             textures.put(name, texture);
             return texture;
         }

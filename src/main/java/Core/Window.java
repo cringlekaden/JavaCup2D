@@ -1,5 +1,8 @@
-package JavaCup2D;
+package Core;
 
+import Scenes.LevelEditorScene;
+import Scenes.LevelScene;
+import Scenes.Scene;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -63,18 +66,17 @@ public class Window {
         switch (scene) {
             case 0:
                 currentScene = new LevelEditorScene();
-                currentScene.init();
-                currentScene.start();
                 break;
             case 1:
                 currentScene = new LevelScene();
-                currentScene.init();
-                currentScene.start();
                 break;
             default:
                 assert false : "Invalid scene: " + scene + "...";
                 break;
         }
+        currentScene.load();
+        currentScene.init();
+        currentScene.start();
     }
 
     public static Scene getScene() {
@@ -104,6 +106,7 @@ public class Window {
             dt = endTime - beginTime;
             beginTime = endTime;
         }
+        currentScene.saveExit();
         imGuiLayer.destroyImGui();
         glfwFreeCallbacks(windowPointer);
         glfwDestroyWindow(windowPointer);

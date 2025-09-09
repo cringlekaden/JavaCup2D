@@ -13,7 +13,7 @@ public class Texture {
     private String filename;
     private int textureID, width, height;
 
-    public Texture(String filename) {
+    public void init(String filename) {
         this.filename = filename;
         textureID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureID);
