@@ -10,6 +10,8 @@ import java.lang.reflect.Modifier;
 
 public abstract class Component {
 
+    private static int ID_COUNTER = 0;
+    private int uid = -1;
     public transient Entity entity = null;
 
     public Component() {}
@@ -20,8 +22,8 @@ public abstract class Component {
         try {
             Field[] fields = this.getClass().getDeclaredFields();
             for (Field field : fields) {
-                //if(Modifier.isTransient(field.getModifiers()))
-                //    continue;
+                if(Modifier.isTransient(field.getModifiers()))
+                    continue;
                 boolean isPrivate = Modifier.isPrivate(field.getModifiers());
                 if(isPrivate)
                     field.setAccessible(true);
@@ -59,6 +61,19 @@ public abstract class Component {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void generateID() {
+        if(uid == -1)
+            uid = ID_COUNTER++;
+    }
+
+    public int getID() {
+        return uid;
+    }
+
+    public static void init(int maxID) {
+        ID_COUNTER = maxID;
     }
 
     public void update(float dt) {}

@@ -6,23 +6,19 @@ import java.util.*;
 
 public class Entity {
 
+    private static int ID_COUNTER = 0;
+    private int uid = -1;
     private String name;
     private List<Component> components;
     private int zIndex;
     public Transform transform;
-
-    public Entity(String name) {
-        this.name = name;
-        components = new ArrayList<>();
-        transform = new Transform();
-        zIndex = 0;
-    }
 
     public Entity(String name, Transform transform, int zIndex) {
         this.name = name;
         this.transform = transform;
         this.zIndex = zIndex;
         components = new ArrayList<>();
+        uid = ID_COUNTER++;
     }
 
     public void update(float dt) {
@@ -39,6 +35,7 @@ public class Entity {
     }
 
     public void addComponent(Component component) {
+        component.generateID();
         components.add(component);
         component.entity = this;
     }
@@ -66,7 +63,19 @@ public class Entity {
         }
     }
 
+    public List<Component> getAllComponents() {
+        return components;
+    }
+
     public int zIndex() {
         return zIndex;
+    }
+
+    public int getID() {
+        return uid;
+    }
+
+    public static void init(int maxID) {
+        ID_COUNTER = maxID;
     }
 }

@@ -79,10 +79,22 @@ public abstract class Scene {
             throw new RuntimeException(e);
         }
         if(!file.equals("")) {
+            int maxEntityID = -1;
+            int maxComponentID = -1;
             Entity[] entityArray = gson.fromJson(file, Entity[].class);
             for(int i = 0; i < entityArray.length; i++) {
                 addEntityToScene(entityArray[i]);
+                for(Component component : entityArray[i].getAllComponents()) {
+                    if(component.getID() > maxComponentID)
+                        maxComponentID = component.getID();
+                }
+                if(entityArray[i].getID() > maxEntityID)
+                    maxEntityID = entityArray[i].getID();
             }
+            maxEntityID++;
+            maxComponentID++;
+            Entity.init(maxEntityID);
+            Component.init(maxComponentID);
             isLoaded = true;
         }
     }

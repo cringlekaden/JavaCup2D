@@ -1,11 +1,13 @@
 package Scenes;
 
+import Components.MouseControls;
 import Components.Rigidbody;
 import Components.Sprites.Sprite;
 import Components.Sprites.SpriteRenderer;
 import Components.Sprites.Spritesheet;
 import Core.Camera;
 import Core.Entity;
+import Core.Prefabs;
 import Core.Transform;
 import Util.AssetPool;
 import imgui.ImGui;
@@ -17,6 +19,7 @@ public class LevelEditorScene extends Scene {
 
     private Spritesheet sprites;
     private Entity test1;
+    private MouseControls mouseControls = new MouseControls();
 
     public LevelEditorScene() {
 
@@ -28,7 +31,7 @@ public class LevelEditorScene extends Scene {
         this.camera = new Camera(new Vector2f(-250, 0));
         sprites = AssetPool.getSpriteSheet("decorationsAndBlocks.png");
         if(isLoaded) {
-            activeEntity = entities.get(0);
+            activeEntity = entities.getFirst();
             return;
         }
         test1 = new Entity("Test1", new Transform(new Vector2f(200, 100), new Vector2f(256, 256)), 0);
@@ -49,6 +52,7 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
+        mouseControls.update(dt);
         for(Entity e : entities)
             e.update(dt);
         renderer.render();
@@ -71,7 +75,8 @@ public class LevelEditorScene extends Scene {
             int id = sprite.getTextureID();
             Vector2f[] texCoords = sprite.getTextureCoords();
             if(ImGui.imageButton("imageButton"+i, id, spriteWidth, spriteHeight, texCoords[0].x, texCoords[0].y, texCoords[2].x, texCoords[2].y)) {
-                System.out.println("Button " + i + " clicked");
+                Entity entity = Prefabs.generateSpriteObject(sprite, spriteWidth, spriteHeight);
+                mouseControls.pickupEntity(entity);
             }
             ImVec2 lastButtonPos = new ImVec2();
             ImGui.getItemRectMax(lastButtonPos);
