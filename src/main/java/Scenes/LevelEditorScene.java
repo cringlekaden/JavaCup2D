@@ -36,28 +36,16 @@ public class LevelEditorScene extends Scene {
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
         if(isLoaded) {
-            activeEntity = entities.getFirst();
+            //activeEntity = entities.getFirst();
             return;
         }
-//        test1 = new Entity("Test1", new Transform(new Vector2f(200, 100), new Vector2f(256, 256)), 0);
-//        SpriteRenderer test1sprite = new SpriteRenderer();
-//        test1sprite.setColor(new Vector4f(1, 0, 1, 1));
-//        test1.addComponent(test1sprite);
-//        test1.addComponent(new Rigidbody());
-//        addEntityToScene(test1);
-//        Entity test2 = new Entity("Test2", new Transform(new Vector2f(400, 100), new Vector2f(256, 256)), 1);
-//        SpriteRenderer test2sprite = new SpriteRenderer();
-//        Sprite testsprite = new Sprite();
-//        testsprite.setTexture(AssetPool.getTexture("blendImage2.png"));
-//        test2sprite.setSprite(testsprite);
-//        test2.addComponent(test2sprite);
-//        addEntityToScene(test2);
-//        activeEntity = test1;
     }
 
     @Override
     public void update(float dt) {
         levelEditorStuff.update(dt);
+        DebugDraw.addBox2D(new Vector2f(200, 200), new Vector2f(64, 32), 30, new Vector3f(1.0f, 0.2f, 0.2f), 1);
+        DebugDraw.addCircle2D(new Vector2f(300, 300), 100);
         for(Entity e : entities)
             e.update(dt);
         renderer.render();

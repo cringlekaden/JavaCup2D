@@ -4,6 +4,7 @@ import Core.Window;
 import Rendering.DebugDraw;
 import Util.Settings;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class GridLines extends Component {
 
@@ -22,9 +23,9 @@ public class GridLines extends Component {
             int x = firstX + (Settings.GRID_WIDTH * i);
             int y = firstY + (Settings.GRID_HEIGHT * i);
             if(i < verticalLines)
-                DebugDraw.addLine2D(new Vector2f(x, firstY), new Vector2f(x, firstY + height));
+                DebugDraw.addLine2D(new Vector2f(x, firstY), new Vector2f(x, firstY + height), new Vector3f(0, 0, 0));
             if(i < horizontalLines)
-                DebugDraw.addLine2D(new Vector2f(firstX, y), new Vector2f(firstX + width, y));
+                DebugDraw.addLine2D(new Vector2f(firstX, y), new Vector2f(firstX + width, y), new Vector3f(0, 0, 0));
         }
     }
 }
