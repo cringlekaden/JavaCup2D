@@ -1,12 +1,17 @@
 package Core;
 
+import Editor.GameViewWindow;
 import Scenes.Scene;
 import imgui.*;
 import imgui.callback.ImStrConsumer;
 import imgui.callback.ImStrSupplier;
+import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
+import imgui.type.ImBoolean;
 
 import java.io.File;
 
@@ -25,8 +30,8 @@ public class ImGuiLayer {
     public void init() {
         ImGui.createContext();
         final ImGuiIO io = ImGui.getIO();
+        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
         io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
-        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
         io.setBackendPlatformName("imgui_java_impl_glfw");
         // Clipboard support
         io.setSetClipboardTextFn(new ImStrConsumer() {@Override public void accept(final String s) {glfwSetClipboardString(windowPtr, s);}});
@@ -73,12 +78,10 @@ public class ImGuiLayer {
     public void update(float dt, Scene scene) {
         startFrame(dt);
 
+        setupDockspace();
         scene.sceneImgui();
-        ImGui.begin("Hello, ImGui!");
-        ImGui.text("We are running imgui-java v1.90.9");
-        ImGui.text("FPS: " + ImGui.getIO().getFramerate());
+        GameViewWindow.imgui();
         ImGui.end();
-
         endFrame();
     }
 
@@ -86,5 +89,19 @@ public class ImGuiLayer {
         imGuiGl3.shutdown();
         imGuiGlfw.shutdown();
         ImGui.destroyContext();
+    }
+
+    private void setupDockspace() {
+        int windowFlags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoDocking;
+        ImGui.setNextWindowPos(0.0f, 0.0f, ImGuiCond.Always);
+        ImGui.setNextWindowSize(Window.getWidth(), Window.getHeight());
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
+        windowFlags |= ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse |
+                        ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove |
+                        ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus;
+        ImGui.begin("Dockspace", new ImBoolean(true), windowFlags);
+        ImGui.popStyleVar(2);
+        ImGui.dockSpace(ImGui.getID("Dockspace"));
     }
 }

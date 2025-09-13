@@ -21,7 +21,6 @@ import org.joml.Vector4f;
 public class LevelEditorScene extends Scene {
 
     private Spritesheet sprites;
-    private Entity test1;
     private Entity levelEditorStuff = new Entity("levelEditorStuff", new Transform(), 0);
 
     public LevelEditorScene() {
@@ -36,7 +35,8 @@ public class LevelEditorScene extends Scene {
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
         if(isLoaded) {
-            //activeEntity = entities.getFirst();
+            if(!entities.isEmpty())
+                activeEntity = entities.getFirst();
             return;
         }
     }
@@ -44,8 +44,6 @@ public class LevelEditorScene extends Scene {
     @Override
     public void update(float dt) {
         levelEditorStuff.update(dt);
-        DebugDraw.addBox2D(new Vector2f(200, 200), new Vector2f(64, 32), 30, new Vector3f(1.0f, 0.2f, 0.2f), 1);
-        DebugDraw.addCircle2D(new Vector2f(300, 300), 100);
         for(Entity e : entities)
             e.update(dt);
         renderer.render();
@@ -85,5 +83,12 @@ public class LevelEditorScene extends Scene {
         AssetPool.getShader("default");
         AssetPool.addSpritesheet("decorationsAndBlocks.png", new Spritesheet(AssetPool.getTexture("decorationsAndBlocks.png"), 16, 16, 81, 0));
         AssetPool.getTexture("blendImage2.png");
+        for(Entity e : entities) {
+            if(e.getComponent(SpriteRenderer.class) != null) {
+                SpriteRenderer spriteRenderer = e.getComponent(SpriteRenderer.class);
+                if(spriteRenderer.getTexture() != null)
+                    spriteRenderer.setTexture(AssetPool.getTexture(spriteRenderer.getTexture().getFilename()));
+            }
+        }
     }
 }

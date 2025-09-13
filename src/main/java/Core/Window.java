@@ -1,6 +1,7 @@
 package Core;
 
 import Rendering.DebugDraw;
+import Rendering.Framebuffer;
 import Scenes.LevelEditorScene;
 import Scenes.LevelScene;
 import Scenes.Scene;
@@ -19,6 +20,7 @@ public class Window {
     private static Scene currentScene;
 
     private ImGuiLayer imGuiLayer;
+    private Framebuffer framebuffer;
     private String title;
     private int width, height;
     private long windowPointer;
@@ -34,6 +36,7 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+        glfwWindowHint(GLFW_SOFT_FULLSCREEN, GLFW_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         String os = System.getProperty("os.name", "").toLowerCase();
@@ -60,6 +63,8 @@ public class Window {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         imGuiLayer = new ImGuiLayer(windowPointer);
         imGuiLayer.init();
+        framebuffer = new Framebuffer(2560, 1440);
+        glViewport(0, 0, 2560, 1440);
         Window.changeScene(0);
     }
 
@@ -90,6 +95,14 @@ public class Window {
         return instance;
     }
 
+    public static Framebuffer getFramebuffer() {
+        return getInstance().framebuffer;
+    }
+
+    public static float getTargetAspectRatio() {
+        return 16.0f / 9.0f;
+    }
+
     public void run() {
         System.out.println("LWJGL Version: " + Version.getVersion());
         float beginTime = (float)glfwGetTime();
@@ -98,12 +111,14 @@ public class Window {
         while(!glfwWindowShouldClose(windowPointer)) {
             glfwPollEvents();
             DebugDraw.beginFrame();
+            framebuffer.bind();
             glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             if(dt >= 0) {
                 DebugDraw.draw();
                 currentScene.update(dt);
             }
+            framebuffer.unbind();
             imGuiLayer.update(dt, currentScene);
             glfwSwapBuffers(windowPointer);
             endTime = (float)glfwGetTime();

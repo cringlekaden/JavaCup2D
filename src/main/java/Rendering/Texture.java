@@ -11,7 +11,25 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
 
     private String filename;
-    private int textureID, width, height;
+    private transient int textureID;
+    private int width, height;
+
+    public Texture() {
+        textureID = -1;
+        width = -1;
+        height = -1;
+    }
+
+    public Texture(int width, int height) {
+        this.filename = "FramebufferTexture";
+        textureID = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    }
 
     public void init(String filename) {
         this.filename = filename;
@@ -39,6 +57,13 @@ public class Texture {
             assert false : "Error loading texture: " + filename + "...";
         }
         stbi_image_free(image);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null) return false;
+        if(!(o instanceof Texture texture)) return false;
+        return texture.getWidth() == width && texture.getHeight() == height && texture.getTextureID() == textureID && texture.getFilename().equals(filename);
     }
 
     public void bind() {
