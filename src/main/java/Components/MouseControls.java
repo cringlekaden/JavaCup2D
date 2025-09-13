@@ -3,6 +3,7 @@ package Components;
 import Core.Entity;
 import Core.MouseListener;
 import Core.Window;
+import Util.Settings;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -22,8 +23,10 @@ public class MouseControls extends Component {
     @Override
     public void update(float dt) {
         if(holdingEntity != null) {
-            holdingEntity.transform.position.x = MouseListener.getOrthoX() - 32;
-            holdingEntity.transform.position.y = MouseListener.getOrthoY() - 32;
+            holdingEntity.transform.position.x = MouseListener.getOrthoX();
+            holdingEntity.transform.position.y = MouseListener.getOrthoY();
+            holdingEntity.transform.position.x = (int)(holdingEntity.transform.position.x / Settings.GRID_WIDTH) * Settings.GRID_WIDTH;
+            holdingEntity.transform.position.y = (int)(holdingEntity.transform.position.y / Settings.GRID_HEIGHT) * Settings.GRID_HEIGHT;
             if(MouseListener.mouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
                 place();
         }

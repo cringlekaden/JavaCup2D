@@ -1,5 +1,6 @@
 package Core;
 
+import Rendering.DebugDraw;
 import Scenes.LevelEditorScene;
 import Scenes.LevelScene;
 import Scenes.Scene;
@@ -96,10 +97,13 @@ public class Window {
         float dt = -1.0f;
         while(!glfwWindowShouldClose(windowPointer)) {
             glfwPollEvents();
+            DebugDraw.beginFrame();
             glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
-            if(dt >= 0)
+            if(dt >= 0) {
+                DebugDraw.draw();
                 currentScene.update(dt);
+            }
             imGuiLayer.update(dt, currentScene);
             glfwSwapBuffers(windowPointer);
             endTime = (float)glfwGetTime();
