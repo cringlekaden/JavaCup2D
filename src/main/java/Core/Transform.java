@@ -1,26 +1,37 @@
 package Core;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class Transform {
 
     public Vector2f position;
+    public float rotation;
     public Vector2f scale;
 
     public Transform() {
-        init(new Vector2f(), new Vector2f());
+        init(new Vector2f(), 0, new Vector2f());
     }
 
     public Transform(Vector2f position) {
-        init(position, new Vector2f());
+        init(position, 0, new Vector2f());
+    }
+
+    public Transform(Vector2f position, float rotation) {
+        init(position, rotation, new Vector2f());
     }
 
     public Transform(Vector2f position, Vector2f scale) {
-        init(position, scale);
+        init(position, 0, scale);
     }
 
-    public void init(Vector2f position, Vector2f scale) {
+    public Transform(Vector2f position, float rotation, Vector2f scale) {
+        init(position, rotation, scale);
+    }
+
+    public void init(Vector2f position, float rotation, Vector2f scale) {
         this.position = position;
+        this.rotation = rotation;
         this.scale = scale;
     }
 

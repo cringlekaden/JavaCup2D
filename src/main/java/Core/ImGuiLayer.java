@@ -39,7 +39,7 @@ public class ImGuiLayer {
         // Clipboard support
         io.setSetClipboardTextFn(new ImStrConsumer() {@Override public void accept(final String s) {glfwSetClipboardString(windowPtr, s);}});
         io.setGetClipboardTextFn(new ImStrSupplier() {private final StringBuilder clipboard = new StringBuilder();@Override public String get() {String text = glfwGetClipboardString(windowPtr);if (text != null) {clipboard.setLength(0);clipboard.append(text);return clipboard.toString();}return "";}});
-        //Font setup
+        // Font setup
         final ImFontAtlas fontAtlas = io.getFonts();
         final ImFontConfig fontConfig = new ImFontConfig();
         fontConfig.setGlyphRanges(fontAtlas.getGlyphRangesDefault());
@@ -47,14 +47,21 @@ public class ImGuiLayer {
         File sfPro = new File("/System/Library/Fonts/SFNS.ttf");
         File menlo = new File("/System/Library/Fonts/Supplemental/Menlo.ttc");
         File helvetica = new File("/System/Library/Fonts/Supplemental/Helvetica.ttc");
-        if (sfPro.isFile())
-            fontAtlas.addFontFromFileTTF(sfPro.getAbsolutePath(), 24, fontConfig);
-        else if (menlo.isFile())
-            fontAtlas.addFontFromFileTTF(menlo.getAbsolutePath(), 24, fontConfig);
-        else if (helvetica.isFile())
-            fontAtlas.addFontFromFileTTF(helvetica.getAbsolutePath(), 24, fontConfig);
-        else
-            System.err.println("No custom font found, using default ImGui font.");
+        ImFont font = null;
+        if (sfPro.isFile()) {
+            font = fontAtlas.addFontFromFileTTF(sfPro.getAbsolutePath(), 24, fontConfig);
+        } else if (menlo.isFile()) {
+            font = fontAtlas.addFontFromFileTTF(menlo.getAbsolutePath(), 24, fontConfig);
+        } else if (helvetica.isFile()) {
+            font = fontAtlas.addFontFromFileTTF(helvetica.getAbsolutePath(), 24, fontConfig);
+        } else {
+            System.err.println("No custom font found, adding default ImGui font.");
+            font = fontAtlas.addFontDefault();
+        }
+        // Ensure a valid default font is set to avoid Glyphs.Size == 0 assertion
+        if (font == null)
+            font = fontAtlas.addFontDefault();
+        io.setFontDefault(font);
         fontConfig.destroy();
         fontAtlas.build();
         setStyle();
@@ -63,8 +70,8 @@ public class ImGuiLayer {
     }
 
     public void startFrame(float dt) {
-        imGuiGl3.newFrame();
         imGuiGlfw.newFrame();
+        imGuiGl3.newFrame();
         ImGui.newFrame();
     }
 
@@ -94,6 +101,10 @@ public class ImGuiLayer {
         imGuiGl3.shutdown();
         imGuiGlfw.shutdown();
         ImGui.destroyContext();
+    }
+
+    public PropertiesWindow getPropertiesWindow() {
+        return propertiesWindow;
     }
 
     private void setupDockspace() {

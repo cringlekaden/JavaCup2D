@@ -61,13 +61,12 @@ public class Window {
         glfwShowWindow(windowPointer);
         GL.createCapabilities();
         glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         framebuffer = new Framebuffer(2560, 1440);
         pickingTexture = new PickingTexture(2560, 1440);
         imGuiLayer = new ImGuiLayer(windowPointer, pickingTexture);
         imGuiLayer.init();
         glViewport(0, 0, 2560, 1440);
-        Window.changeScene(0);
     }
 
     public static void changeScene(int scene) {
@@ -106,6 +105,7 @@ public class Window {
     }
 
     public void run() {
+        Window.changeScene(0);
         System.out.println("LWJGL Version: " + Version.getVersion());
         float beginTime = (float)glfwGetTime();
         float endTime;
@@ -155,5 +155,9 @@ public class Window {
 
     public static int getHeight() {
         return getInstance().height;
+    }
+
+    public static ImGuiLayer getImGuiLayer() {
+        return getInstance().imGuiLayer;
     }
 }

@@ -1,16 +1,10 @@
 package Scenes;
 
-import Components.EditorCamera;
-import Components.GridLines;
-import Components.MouseControls;
-import Components.Rigidbody;
+import Components.*;
 import Components.Sprites.Sprite;
 import Components.Sprites.SpriteRenderer;
 import Components.Sprites.Spritesheet;
-import Core.Camera;
-import Core.Entity;
-import Core.Prefabs;
-import Core.Transform;
+import Core.*;
 import Rendering.DebugDraw;
 import Util.AssetPool;
 import imgui.ImGui;
@@ -31,14 +25,14 @@ public class LevelEditorScene extends Scene {
     @Override
     public void init() {
         loadResources();
-        this.camera = new Camera(new Vector2f(-250, 0));
         sprites = AssetPool.getSpriteSheet("decorationsAndBlocks.png");
+        Spritesheet gizmos = AssetPool.getSpriteSheet("gizmos.png");
+        this.camera = new Camera(new Vector2f(-250, 0));
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
         levelEditorStuff.addComponent(new EditorCamera(camera));
-        if(isLoaded) {
-            return;
-        }
+        levelEditorStuff.addComponent(new TranslateGizmo(gizmos.getSprite(1), Window.getImGuiLayer().getPropertiesWindow()));
+        levelEditorStuff.start();
     }
 
     @Override
@@ -55,6 +49,9 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void imgui() {
+        ImGui.begin("Level Editor Stuff");
+        levelEditorStuff.imgui();
+        ImGui.end();
         ImGui.begin("Assets:");
         ImVec2 windowPos = new ImVec2();
         ImGui.getWindowPos(windowPos);
@@ -86,7 +83,7 @@ public class LevelEditorScene extends Scene {
     private void loadResources() {
         AssetPool.getShader("default");
         AssetPool.addSpritesheet("decorationsAndBlocks.png", new Spritesheet(AssetPool.getTexture("decorationsAndBlocks.png"), 16, 16, 81, 0));
-        AssetPool.getTexture("blendImage2.png");
+        AssetPool.addSpritesheet("gizmos.png", new Spritesheet(AssetPool.getTexture("gizmos.png"), 24, 48, 2, 0));
         for(Entity e : entities) {
             if(e.getComponent(SpriteRenderer.class) != null) {
                 SpriteRenderer spriteRenderer = e.getComponent(SpriteRenderer.class);

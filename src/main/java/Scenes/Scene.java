@@ -105,7 +105,12 @@ public abstract class Scene {
                 .create();
         try {
             FileWriter writer = new FileWriter("level.txt");
-            writer.write(gson.toJson(entities));
+            List<Entity> serializedEntities = new ArrayList<>();
+            for(Entity e : entities) {
+                if(e.doSerialize())
+                    serializedEntities.add(e);
+            }
+            writer.write(gson.toJson(serializedEntities));
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

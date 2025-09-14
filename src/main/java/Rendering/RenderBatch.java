@@ -4,6 +4,7 @@ import Components.Sprites.SpriteRenderer;
 import Core.Window;
 import Util.AssetPool;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
@@ -152,14 +153,25 @@ public class RenderBatch implements Comparable<RenderBatch> {
                 }
             }
         }
+        boolean hasRotation = spriteRenderer.entity.transform.rotation != 0.0f;
+        Matrix4f transform = new Matrix4f().identity();
+        if(hasRotation) {
+            transform.translate(spriteRenderer.entity.transform.position.x, spriteRenderer.entity.transform.position.y, 0);
+            transform.rotate((float)Math.toRadians(spriteRenderer.entity.transform.rotation), 0, 0, 1);
+            transform.scale(spriteRenderer.entity.transform.scale.x, spriteRenderer.entity.transform.scale.y, 1);
+        }
         float xAdd = 1.0f;
         float yAdd = 1.0f;
         for(int i = 0; i < 4; i++) {
             if(i == 1) yAdd = 0.0f;
             if(i == 2) xAdd = 0.0f;
             if(i == 3) yAdd = 1.0f;
-            vertices[offset] = spriteRenderer.entity.transform.position.x + (xAdd * spriteRenderer.entity.transform.scale.x);
-            vertices[offset + 1] = spriteRenderer.entity.transform.position.y + (yAdd * spriteRenderer.entity.transform.scale.y);
+            Vector4f currentPosition = new Vector4f(spriteRenderer.entity.transform.position.x + (xAdd * spriteRenderer.entity.transform.scale.x),
+                    spriteRenderer.entity.transform.position.y + (yAdd * spriteRenderer.entity.transform.scale.y), 0, 1);
+            if(hasRotation)
+                currentPosition = new Vector4f(xAdd, yAdd, 0, 1).mul(transform);
+            vertices[offset] = currentPosition.x;
+            vertices[offset + 1] = currentPosition.y;
             vertices[offset + 2] = color.x;
             vertices[offset + 3] = color.y;
             vertices[offset + 4] = color.z;

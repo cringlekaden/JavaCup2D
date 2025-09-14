@@ -11,7 +11,10 @@ out vec4 color;
 void main() {
     if(fTexID > 0) {
         int texID = int(fTexID);
-        color = fColor * texture(uTextures[texID], fTexCoord);
+        vec4 texColor = texture(uTextures[texID], fTexCoord);
+        // Discard fully transparent fragments to avoid halos/overdraw
+        if(texColor.a <= 0.1) discard;
+        color = fColor * texColor;
     } else {
         color = fColor;
     }

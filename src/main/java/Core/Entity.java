@@ -7,10 +7,11 @@ import java.util.*;
 public class Entity {
 
     private static int ID_COUNTER = 0;
-    private int uid = -1;
     private String name;
     private List<Component> components;
     private int zIndex;
+    private int uid = -1;
+    private boolean doSerialize = true;
     public Transform transform;
 
     public Entity(String name, Transform transform, int zIndex) {
@@ -65,6 +66,14 @@ public class Entity {
 
     public List<Component> getAllComponents() {
         return components;
+    }
+
+    public void setNoSerialize() {
+        doSerialize = false;
+    }
+
+    public boolean doSerialize() {
+        return doSerialize;
     }
 
     public int zIndex() {
