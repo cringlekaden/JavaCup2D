@@ -16,13 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Scene {
 
     protected Camera camera;
     protected Renderer renderer = new Renderer();
     protected List<Entity> entities = new ArrayList<>();
-    protected Entity activeEntity = null;
     protected boolean isLoaded = false;
     private boolean isRunning = false;
 
@@ -47,6 +47,11 @@ public abstract class Scene {
         }
     }
 
+    public Entity getEntityByID(int id) {
+        Optional<Entity> result = entities.stream().filter(entity -> entity.getID() == id).findFirst();
+        return result.orElse(null);
+    }
+
     public Camera getCamera() {
         return camera;
     }
@@ -55,14 +60,7 @@ public abstract class Scene {
 
     public abstract void update(float dt);
 
-    public void sceneImgui() {
-        if(activeEntity != null) {
-            ImGui.begin("Inspector");
-            activeEntity.imgui();
-            ImGui.end();
-        }
-        imgui();
-    }
+    public abstract void render();
 
     public void imgui() {}
 
@@ -72,7 +70,7 @@ public abstract class Scene {
                 .registerTypeAdapter(Component.class, new ComponentTypeAdapter())
                 .registerTypeAdapter(Entity.class, new EntityTypeAdapter())
                 .create();
-        String file = "";
+        String file;
         try {
             file = new String(Files.readAllBytes(Paths.get("level.txt")));
         } catch (IOException e) {

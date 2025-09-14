@@ -41,7 +41,7 @@ public abstract class Component {
                     if(ImGui.dragFloat(name + ": ", imFloat))
                         field.set(this, imFloat[0]);
                 } else if(type == boolean.class) {
-                    boolean val = (boolean)value;
+                    boolean val = (boolean) value;
                     if(ImGui.checkbox(name + ": ", val))
                         field.set(this, !val);
                 } else if(type == Vector3f.class) {

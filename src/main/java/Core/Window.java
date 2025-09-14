@@ -1,10 +1,10 @@
 package Core;
 
-import Rendering.DebugDraw;
-import Rendering.Framebuffer;
+import Rendering.*;
 import Scenes.LevelEditorScene;
 import Scenes.LevelScene;
 import Scenes.Scene;
+import Util.AssetPool;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -21,6 +21,7 @@ public class Window {
 
     private ImGuiLayer imGuiLayer;
     private Framebuffer framebuffer;
+    private PickingTexture pickingTexture;
     private String title;
     private int width, height;
     private long windowPointer;
@@ -61,9 +62,10 @@ public class Window {
         GL.createCapabilities();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        imGuiLayer = new ImGuiLayer(windowPointer);
-        imGuiLayer.init();
         framebuffer = new Framebuffer(2560, 1440);
+        pickingTexture = new PickingTexture(2560, 1440);
+        imGuiLayer = new ImGuiLayer(windowPointer, pickingTexture);
+        imGuiLayer.init();
         glViewport(0, 0, 2560, 1440);
         Window.changeScene(0);
     }
@@ -108,15 +110,28 @@ public class Window {
         float beginTime = (float)glfwGetTime();
         float endTime;
         float dt = -1.0f;
+        Shader defaultShader = AssetPool.getShader("default");
+        Shader pickingShader = AssetPool.getShader("picking");
         while(!glfwWindowShouldClose(windowPointer)) {
             glfwPollEvents();
+            glDisable(GL_BLEND);
+            pickingTexture.bind();
+            glViewport(0, 0, 2560,1440);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            Renderer.bindShader(pickingShader);
+            currentScene.render();
+            pickingTexture.unbind();
+            glEnable(GL_BLEND);
             DebugDraw.beginFrame();
             framebuffer.bind();
             glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             if(dt >= 0) {
                 DebugDraw.draw();
+                Renderer.bindShader(defaultShader);
                 currentScene.update(dt);
+                currentScene.render();
             }
             framebuffer.unbind();
             imGuiLayer.update(dt, currentScene);
@@ -124,6 +139,7 @@ public class Window {
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
+            MouseListener.endFrame();
         }
         currentScene.saveExit();
         imGuiLayer.destroyImGui();

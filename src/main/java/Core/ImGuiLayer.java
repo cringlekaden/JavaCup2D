@@ -1,6 +1,8 @@
 package Core;
 
 import Editor.GameViewWindow;
+import Editor.PropertiesWindow;
+import Rendering.PickingTexture;
 import Scenes.Scene;
 import imgui.*;
 import imgui.callback.ImStrConsumer;
@@ -22,9 +24,13 @@ public class ImGuiLayer {
     private final long windowPtr;
     private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
+    private GameViewWindow gameViewWindow;
+    private PropertiesWindow propertiesWindow;
 
-    public ImGuiLayer(long windowPtr) {
+    public ImGuiLayer(long windowPtr, PickingTexture pickingTexture) {
         this.windowPtr = windowPtr;
+        this.gameViewWindow = new GameViewWindow();
+        this.propertiesWindow = new PropertiesWindow(pickingTexture);
     }
 
     public void init() {
@@ -77,10 +83,11 @@ public class ImGuiLayer {
 
     public void update(float dt, Scene scene) {
         startFrame(dt);
-
         setupDockspace();
-        scene.sceneImgui();
-        GameViewWindow.imgui();
+        scene.imgui();
+        gameViewWindow.imgui();
+        propertiesWindow.update(dt, scene);
+        propertiesWindow.imgui();
         ImGui.end();
         endFrame();
     }

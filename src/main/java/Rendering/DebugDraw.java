@@ -20,7 +20,7 @@ public class DebugDraw {
     private static int MAX_LINES = 500;
     private static List<Line2D> lines = new ArrayList<>();
     private static float[] vertices = new float[MAX_LINES * 12];
-    private static Shader shader = AssetPool.getShader("debugLine2D");
+    private static Shader shader = AssetPool.getShader("debug");
     private static int vaoID;
     private static int vboID;
     private static boolean started = false;

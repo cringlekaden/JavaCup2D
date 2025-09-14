@@ -1,5 +1,7 @@
 package Core;
 
+import Editor.GameViewWindow;
+import imgui.ImGui;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -56,7 +58,6 @@ public class MouseListener {
         getInstance().scrollY = 0;
         getInstance().lastX = getInstance().x;
         getInstance().lastY = getInstance().y;
-        getInstance().x = 0;
     }
 
     public static float getX() {
@@ -69,7 +70,7 @@ public class MouseListener {
 
     public static float getOrthoX() {
         float currentX = getX() - getInstance().gameViewportPosition.x;
-        currentX = (currentX / getInstance().gameViewportSize.x * 2.0f) - 1.0f;
+        currentX = currentX / getInstance().gameViewportSize.x * 2.0f - 1.0f;
         Vector4f temp = new Vector4f(currentX, 0, 0, 1);
         Matrix4f view = new Matrix4f();
         Window.getScene().getCamera().getInverseView().mul(Window.getScene().getCamera().getInverseProjection(), view);
@@ -80,12 +81,26 @@ public class MouseListener {
 
     public static float getOrthoY() {
         float currentY = getY() - getInstance().gameViewportPosition.y;
-        currentY = -((currentY / getInstance().gameViewportSize.y) * 2.0f - 1.0f);
+        currentY = -(currentY / getInstance().gameViewportSize.y * 2.0f - 1.0f);
         Vector4f temp = new Vector4f(0, currentY, 0, 1);
         Matrix4f view = new Matrix4f();
         Window.getScene().getCamera().getInverseView().mul(Window.getScene().getCamera().getInverseProjection(), view);
         temp.mul(view);
         currentY = temp.y;
+        return currentY;
+    }
+
+    public static float getScreenX() {
+        float currentX = getX() - getInstance().gameViewportPosition.x;
+        // Map from viewport space to picking framebuffer resolution (matches Window's FBO size)
+        currentX = currentX / getInstance().gameViewportSize.x * 2560.0f;
+        return currentX;
+    }
+
+    public static float getScreenY() {
+        float currentY = getY() - getInstance().gameViewportPosition.y;
+        // Flip Y for OpenGL origin and map to picking framebuffer resolution
+        currentY = 1440.0f - (currentY / getInstance().gameViewportSize.y * 1440.0f);
         return currentY;
     }
 
@@ -110,6 +125,8 @@ public class MouseListener {
     }
 
     public static boolean mouseButtonPressed(int button) {
+        if (ImGui.getIO().getWantCaptureMouse() && !GameViewWindow.isHovered())
+            return false;
         return getInstance().mouseButtonPressed[button];
     }
 

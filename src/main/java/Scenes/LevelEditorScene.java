@@ -35,8 +35,6 @@ public class LevelEditorScene extends Scene {
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
         if(isLoaded) {
-            if(!entities.isEmpty())
-                activeEntity = entities.getFirst();
             return;
         }
     }
@@ -46,6 +44,10 @@ public class LevelEditorScene extends Scene {
         levelEditorStuff.update(dt);
         for(Entity e : entities)
             e.update(dt);
+    }
+
+    @Override
+    public void render() {
         renderer.render();
     }
 
