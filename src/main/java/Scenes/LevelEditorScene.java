@@ -1,5 +1,6 @@
 package Scenes;
 
+import Components.EditorCamera;
 import Components.GridLines;
 import Components.MouseControls;
 import Components.Rigidbody;
@@ -34,6 +35,7 @@ public class LevelEditorScene extends Scene {
         sprites = AssetPool.getSpriteSheet("decorationsAndBlocks.png");
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
+        levelEditorStuff.addComponent(new EditorCamera(camera));
         if(isLoaded) {
             return;
         }

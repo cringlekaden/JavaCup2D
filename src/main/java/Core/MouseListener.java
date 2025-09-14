@@ -113,10 +113,14 @@ public class MouseListener {
     }
 
     public static float getScrollX() {
+        if (ImGui.getIO().getWantCaptureMouse() && !GameViewWindow.isHovered())
+            return 0.0f;
         return (float) getInstance().scrollX;
     }
 
     public static float getScrollY() {
+        if (ImGui.getIO().getWantCaptureMouse() && !GameViewWindow.isHovered())
+            return 0.0f;
         return (float) getInstance().scrollY;
     }
 

@@ -1,5 +1,6 @@
 package Components;
 
+import Core.Camera;
 import Core.Window;
 import Rendering.DebugDraw;
 import Util.Settings;
@@ -10,14 +11,15 @@ public class GridLines extends Component {
 
     @Override
     public void update(float dt) {
-        Vector2f cameraPosition = Window.getScene().getCamera().getPosition();
-        Vector2f projectionSize = Window.getScene().getCamera().getProjectionSize();
+        Camera camera = Window.getScene().getCamera();
+        Vector2f cameraPosition = camera.getPosition();
+        Vector2f projectionSize = camera.getProjectionSize();
         int firstX = ((int)(cameraPosition.x / Settings.GRID_WIDTH) - 1) * Settings.GRID_WIDTH;
         int firstY = ((int)(cameraPosition.y / Settings.GRID_HEIGHT) - 1) * Settings.GRID_HEIGHT;
-        int verticalLines = (int)(projectionSize.x / Settings.GRID_WIDTH) + 2;
-        int horizontalLines = (int)(projectionSize.y / Settings.GRID_HEIGHT) + 2;
-        int height = (int)projectionSize.y + Settings.GRID_WIDTH * 2;
-        int width = (int)projectionSize.x + Settings.GRID_HEIGHT * 2;
+        int verticalLines = (int)(projectionSize.x * camera.getZoom() / Settings.GRID_WIDTH) + 2;
+        int horizontalLines = (int)(projectionSize.y * camera.getZoom() / Settings.GRID_HEIGHT) + 2;
+        int height = (int)(projectionSize.y * camera.getZoom()) + Settings.GRID_WIDTH * 2;
+        int width = (int)(projectionSize.x * camera.getZoom()) + Settings.GRID_HEIGHT * 2;
         int maxLines = Math.max(verticalLines, horizontalLines);
         for(int i = 0; i < maxLines; i++) {
             int x = firstX + (Settings.GRID_WIDTH * i);
