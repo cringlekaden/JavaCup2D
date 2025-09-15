@@ -1,5 +1,7 @@
 package Editor;
 
+import Components.NonPickable;
+import Components.Sprites.SpriteRenderer;
 import Core.Entity;
 import Core.MouseListener;
 import Rendering.PickingTexture;
@@ -24,7 +26,13 @@ public class PropertiesWindow {
         if(MouseListener.mouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && debounceTime < 0) {
             int x = (int)MouseListener.getScreenX();
             int y = (int)MouseListener.getScreenY();
-            currentEntity = currentScene.getEntityByID(pickingTexture.readPixel(x, y));
+            int entityID = pickingTexture.readPixel(x, y);
+            Entity pickedEntity = currentScene.getEntityByID(entityID);
+            if(pickedEntity != null && pickedEntity.getComponent(NonPickable.class) == null)
+                currentEntity = pickedEntity;
+            else if(pickedEntity == null && !MouseListener.isDragging()) {
+                currentEntity = null;
+            }
             debounceTime = 0.2f;
         }
     }

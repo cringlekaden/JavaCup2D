@@ -3,12 +3,28 @@
     "name": "GeneratedSpriteEntity",
     "components": [
       {
+        "type": "Components.Transform",
+        "properties": {
+          "position": {
+            "x": 320.11356,
+            "y": 352.4242
+          },
+          "rotation": 0.0,
+          "scale": {
+            "x": 32.0,
+            "y": 32.0
+          },
+          "zIndex": 0,
+          "uid": 18
+        }
+      },
+      {
         "type": "Components.Sprites.SpriteRenderer",
         "properties": {
           "color": {
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0,
+            "x": 0.9019608,
+            "y": 0.5764706,
+            "z": 0.9411765,
             "w": 1.0
           },
           "sprite": {
@@ -19,47 +35,51 @@
             },
             "textureCoords": [
               {
-                "x": 0.42857143,
+                "x": 0.85714287,
+                "y": 1.0
+              },
+              {
+                "x": 0.85714287,
                 "y": 0.9166667
               },
               {
-                "x": 0.42857143,
-                "y": 0.8333333
-              },
-              {
-                "x": 0.2857143,
-                "y": 0.8333333
-              },
-              {
-                "x": 0.2857143,
+                "x": 0.71428573,
                 "y": 0.9166667
+              },
+              {
+                "x": 0.71428573,
+                "y": 1.0
               }
             ],
             "width": 16.0,
             "height": 16.0
           },
-          "uid": 6
+          "uid": 19
         }
       }
     ],
-    "zIndex": 0,
     "uid": 1,
-    "doSerialize": true,
-    "transform": {
-      "position": {
-        "x": 352.0,
-        "y": 288.0
-      },
-      "rotation": 0.0,
-      "scale": {
-        "x": 32.0,
-        "y": 32.0
-      }
-    }
+    "doSerialize": true
   },
   {
     "name": "GeneratedSpriteEntity",
     "components": [
+      {
+        "type": "Components.Transform",
+        "properties": {
+          "position": {
+            "x": 510.95514,
+            "y": 318.8845
+          },
+          "rotation": 0.0,
+          "scale": {
+            "x": 32.227783,
+            "y": 32.722656
+          },
+          "zIndex": 0,
+          "uid": 38
+        }
+      },
       {
         "type": "Components.Sprites.SpriteRenderer",
         "properties": {
@@ -77,54 +97,58 @@
             },
             "textureCoords": [
               {
-                "x": 0.85714287,
+                "x": 0.2857143,
                 "y": 0.9166667
               },
               {
-                "x": 0.85714287,
+                "x": 0.2857143,
                 "y": 0.8333333
               },
               {
-                "x": 0.71428573,
+                "x": 0.14285715,
                 "y": 0.8333333
               },
               {
-                "x": 0.71428573,
+                "x": 0.14285715,
                 "y": 0.9166667
               }
             ],
             "width": 16.0,
             "height": 16.0
           },
-          "uid": 13
+          "uid": 39
         }
       }
     ],
-    "zIndex": 0,
     "uid": 2,
-    "doSerialize": true,
-    "transform": {
-      "position": {
-        "x": 512.0,
-        "y": 288.0
-      },
-      "rotation": 0.0,
-      "scale": {
-        "x": 32.0,
-        "y": 32.0
-      }
-    }
+    "doSerialize": true
   },
   {
     "name": "GeneratedSpriteEntity",
     "components": [
       {
+        "type": "Components.Transform",
+        "properties": {
+          "position": {
+            "x": 127.29208,
+            "y": 223.66327
+          },
+          "rotation": 0.0,
+          "scale": {
+            "x": 32.0,
+            "y": 32.0
+          },
+          "zIndex": 0,
+          "uid": 58
+        }
+      },
+      {
         "type": "Components.Sprites.SpriteRenderer",
         "properties": {
           "color": {
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0,
+            "x": 0.97029704,
+            "y": 0.8938223,
+            "z": 0.1120805,
             "w": 1.0
           },
           "sprite": {
@@ -135,47 +159,51 @@
             },
             "textureCoords": [
               {
-                "x": 0.71428573,
-                "y": 1.0
+                "x": 0.2857143,
+                "y": 0.75
               },
               {
-                "x": 0.71428573,
-                "y": 0.9166667
+                "x": 0.2857143,
+                "y": 0.6666667
               },
               {
-                "x": 0.5714286,
-                "y": 0.9166667
+                "x": 0.14285715,
+                "y": 0.6666667
               },
               {
-                "x": 0.5714286,
-                "y": 1.0
+                "x": 0.14285715,
+                "y": 0.75
               }
             ],
             "width": 16.0,
             "height": 16.0
           },
-          "uid": 14
+          "uid": 59
         }
       }
     ],
-    "zIndex": 0,
     "uid": 3,
-    "doSerialize": true,
-    "transform": {
-      "position": {
-        "x": 256.0,
-        "y": 288.0
-      },
-      "rotation": 0.0,
-      "scale": {
-        "x": 32.0,
-        "y": 32.0
-      }
-    }
+    "doSerialize": true
   },
   {
     "name": "GeneratedSpriteEntity",
     "components": [
+      {
+        "type": "Components.Transform",
+        "properties": {
+          "position": {
+            "x": 352.0,
+            "y": 224.0
+          },
+          "rotation": 0.0,
+          "scale": {
+            "x": 32.0,
+            "y": 32.0
+          },
+          "zIndex": 0,
+          "uid": 78
+        }
+      },
       {
         "type": "Components.Sprites.SpriteRenderer",
         "properties": {
@@ -193,100 +221,30 @@
             },
             "textureCoords": [
               {
-                "x": 0.5714286,
+                "x": 0.85714287,
                 "y": 1.0
               },
               {
-                "x": 0.5714286,
+                "x": 0.85714287,
                 "y": 0.9166667
               },
               {
-                "x": 0.42857143,
+                "x": 0.71428573,
                 "y": 0.9166667
               },
               {
-                "x": 0.42857143,
-                "y": 1.0
-              }
-            ],
-            "width": 16.0,
-            "height": 16.0
-          },
-          "uid": 15
-        }
-      }
-    ],
-    "zIndex": 0,
-    "uid": 4,
-    "doSerialize": true,
-    "transform": {
-      "position": {
-        "x": 224.0,
-        "y": 288.0
-      },
-      "rotation": 0.0,
-      "scale": {
-        "x": 32.0,
-        "y": 32.0
-      }
-    }
-  },
-  {
-    "name": "GeneratedSpriteEntity",
-    "components": [
-      {
-        "type": "Components.Sprites.SpriteRenderer",
-        "properties": {
-          "color": {
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0,
-            "w": 1.0
-          },
-          "sprite": {
-            "texture": {
-              "filename": "decorationsAndBlocks.png",
-              "width": 112,
-              "height": 192
-            },
-            "textureCoords": [
-              {
-                "x": 0.42857143,
-                "y": 1.0
-              },
-              {
-                "x": 0.42857143,
-                "y": 0.9166667
-              },
-              {
-                "x": 0.2857143,
-                "y": 0.9166667
-              },
-              {
-                "x": 0.2857143,
+                "x": 0.71428573,
                 "y": 1.0
               }
             ],
             "width": 16.0,
             "height": 16.0
           },
-          "uid": 16
+          "uid": 79
         }
       }
     ],
-    "zIndex": 0,
-    "uid": 5,
-    "doSerialize": true,
-    "transform": {
-      "position": {
-        "x": 192.0,
-        "y": 288.0
-      },
-      "rotation": 0.0,
-      "scale": {
-        "x": 32.0,
-        "y": 32.0
-      }
-    }
+    "uid": 8,
+    "doSerialize": true
   }
 ]

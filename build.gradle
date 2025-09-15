@@ -6,6 +6,9 @@ group = 'JavaCup2D'
 version = '1.0-SNAPSHOT'
 
 repositories {
+    flatDir {
+        dirs 'libs'
+    }
     mavenCentral()
 }
 
@@ -52,8 +55,8 @@ switch (OperatingSystem.current()) {
 }
 
 dependencies {
+    implementation name: 'jbox2d-library'
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-assimp"
     implementation "org.lwjgl:lwjgl-glfw"

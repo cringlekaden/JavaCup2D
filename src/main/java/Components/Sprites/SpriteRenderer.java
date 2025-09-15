@@ -1,7 +1,8 @@
 package Components.Sprites;
 
 import Components.Component;
-import Core.Transform;
+import Components.Transform;
+import Editor.JCImGui;
 import Rendering.Texture;
 import imgui.ImGui;
 import org.joml.Vector2f;
@@ -29,9 +30,8 @@ public class SpriteRenderer extends Component {
 
     @Override
     public void imgui() {
-        float[] imColor = { color.x, color.y, color.z, color.w };
-        if(ImGui.colorPicker4("Color Picker: ", imColor))
-            setColor(new Vector4f(imColor[0], imColor[1], imColor[2], imColor[3]));
+        if(JCImGui.drawColorControl4("Color Picker", color))
+            isDirty = true;
     }
 
     public Vector4f getColor() {
@@ -68,6 +68,10 @@ public class SpriteRenderer extends Component {
 
     public boolean isDirty() {
         return isDirty;
+    }
+
+    public void setDirty() {
+        isDirty = true;
     }
 
     public void isClean() {

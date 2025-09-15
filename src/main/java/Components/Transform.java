@@ -1,13 +1,14 @@
-package Core;
+package Components;
 
+import Editor.JCImGui;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
-public class Transform {
+public class Transform extends Component {
 
     public Vector2f position;
     public float rotation;
     public Vector2f scale;
+    public int zIndex;
 
     public Transform() {
         init(new Vector2f(), 0, new Vector2f());
@@ -33,14 +34,24 @@ public class Transform {
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+        this.zIndex = 0;
+    }
+
+    @Override
+    public void imgui() {
+        JCImGui.drawVec2Control("Position", position);
+        JCImGui.drawVec2Control("Scale", scale, 32);
+        JCImGui.drawFloatControl("Rotation", rotation);
+        JCImGui.drawIntControl("zIndex", zIndex);
     }
 
     public Transform copy() {
-        return new Transform(new Vector2f(position), new Vector2f(scale));
+        return new Transform(new Vector2f(position), Float.valueOf(rotation), new Vector2f(scale));
     }
 
     public void copy(Transform to) {
         to.position.set(position);
+        to.rotation = Float.valueOf(rotation);
         to.scale.set(scale);
     }
 
@@ -49,6 +60,7 @@ public class Transform {
         if(o == null) return false;
         if(!(o instanceof Transform)) return false;
         Transform other = (Transform) o;
-        return other.position.x == position.x && other.scale.x == scale.x && other.position.y == position.y && other.scale.y == scale.y;
+        return other.position.x == position.x && other.scale.x == scale.x && other.position.y == position.y && other.scale.y == scale.y
+                && other.rotation == rotation && other.zIndex == zIndex;
     }
 }

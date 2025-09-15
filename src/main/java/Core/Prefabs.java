@@ -2,16 +2,17 @@ package Core;
 
 import Components.Sprites.Sprite;
 import Components.Sprites.SpriteRenderer;
-import org.joml.Vector2f;
 
 public class Prefabs {
 
-    public static Entity generateSpriteObject(Sprite sprite, float sizeX, float sizeY) {
-        return generateSpriteObject(sprite, sizeX, sizeY, 0);
+    public static Entity generateSpriteEntity(Sprite sprite, float sizeX, float sizeY) {
+        return generateSpriteEntity(sprite, sizeX, sizeY, 0);
     }
 
-    public static Entity generateSpriteObject(Sprite sprite, float sizeX, float sizeY, int zIndex) {
-        Entity entity = new Entity("GeneratedSpriteEntity", new Transform(new Vector2f(), new Vector2f(sizeX, sizeY)), zIndex);
+    public static Entity generateSpriteEntity(Sprite sprite, float sizeX, float sizeY, int zIndex) {
+        Entity entity = Window.getScene().createEntity("GeneratedSpriteEntity");
+        entity.transform.scale.x = sizeX;
+        entity.transform.scale.y = sizeY;
         SpriteRenderer renderer = new SpriteRenderer();
         renderer.setSprite(sprite);
         entity.addComponent(renderer);

@@ -2,6 +2,7 @@ package Scenes;
 
 import Components.Component;
 import Components.ComponentTypeAdapter;
+import Components.Transform;
 import Core.Camera;
 import Core.Entity;
 import Core.EntityTypeAdapter;
@@ -63,6 +64,13 @@ public abstract class Scene {
     public abstract void render();
 
     public void imgui() {}
+
+    public Entity createEntity(String name) {
+        Entity entity = new Entity(name);
+        entity.addComponent(new Transform());
+        entity.transform = entity.getComponent(Transform.class);
+        return entity;
+    }
 
     public void load() {
         Gson gson = new GsonBuilder()

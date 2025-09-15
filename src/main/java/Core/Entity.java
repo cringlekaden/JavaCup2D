@@ -1,6 +1,8 @@
 package Core;
 
 import Components.Component;
+import Components.Transform;
+import imgui.ImGui;
 
 import java.util.*;
 
@@ -9,15 +11,12 @@ public class Entity {
     private static int ID_COUNTER = 0;
     private String name;
     private List<Component> components;
-    private int zIndex;
     private int uid = -1;
     private boolean doSerialize = true;
-    public Transform transform;
+    public transient Transform transform;
 
-    public Entity(String name, Transform transform, int zIndex) {
+    public Entity(String name) {
         this.name = name;
-        this.transform = transform;
-        this.zIndex = zIndex;
         components = new ArrayList<>();
         uid = ID_COUNTER++;
     }
@@ -27,12 +26,15 @@ public class Entity {
     }
 
     public void start() {
-        for (Component component : components) component.start();
+        for(int i = 0; i < components.size(); i++)
+            components.get(i).start();
     }
 
     public void imgui() {
-        for(Component c : components)
-            c.imgui();
+        for(Component c : components) {
+            if(ImGui.collapsingHeader(c.getClass().getSimpleName()))
+                c.imgui();
+        }
     }
 
     public void addComponent(Component component) {
@@ -74,10 +76,6 @@ public class Entity {
 
     public boolean doSerialize() {
         return doSerialize;
-    }
-
-    public int zIndex() {
-        return zIndex;
     }
 
     public int getID() {

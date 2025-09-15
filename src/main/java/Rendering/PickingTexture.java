@@ -14,10 +14,12 @@ public class PickingTexture {
 
     public void bind() {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID);
+        glEnable(GL_DEPTH_TEST);
     }
 
     public void unbind() {
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glDisable(GL_DEPTH_TEST);
     }
 
     public int readPixel(int x, int y) {

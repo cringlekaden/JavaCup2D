@@ -5,18 +5,15 @@ import Components.Sprites.Sprite;
 import Components.Sprites.SpriteRenderer;
 import Components.Sprites.Spritesheet;
 import Core.*;
-import Rendering.DebugDraw;
 import Util.AssetPool;
 import imgui.ImGui;
 import imgui.ImVec2;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class LevelEditorScene extends Scene {
 
     private Spritesheet sprites;
-    private Entity levelEditorStuff = new Entity("levelEditorStuff", new Transform(), 0);
+    private Entity levelEditorStuff = createEntity("levelEditorStuff");
 
     public LevelEditorScene() {
 
@@ -31,7 +28,7 @@ public class LevelEditorScene extends Scene {
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
         levelEditorStuff.addComponent(new EditorCamera(camera));
-        levelEditorStuff.addComponent(new TranslateGizmo(gizmos.getSprite(1), Window.getImGuiLayer().getPropertiesWindow()));
+        levelEditorStuff.addComponent(new GizmoSystem(gizmos));
         levelEditorStuff.start();
     }
 
@@ -67,7 +64,7 @@ public class LevelEditorScene extends Scene {
             int id = sprite.getTextureID();
             Vector2f[] texCoords = sprite.getTextureCoords();
             if(ImGui.imageButton("imageButton"+i, id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y)) {
-                Entity entity = Prefabs.generateSpriteObject(sprite, 32, 32);
+                Entity entity = Prefabs.generateSpriteEntity(sprite, 32, 32);
                 levelEditorStuff.getComponent(MouseControls.class).pickupEntity(entity);
             }
             ImVec2 lastButtonPos = new ImVec2();
@@ -83,7 +80,7 @@ public class LevelEditorScene extends Scene {
     private void loadResources() {
         AssetPool.getShader("default");
         AssetPool.addSpritesheet("decorationsAndBlocks.png", new Spritesheet(AssetPool.getTexture("decorationsAndBlocks.png"), 16, 16, 81, 0));
-        AssetPool.addSpritesheet("gizmos.png", new Spritesheet(AssetPool.getTexture("gizmos.png"), 24, 48, 2, 0));
+        AssetPool.addSpritesheet("gizmos.png", new Spritesheet(AssetPool.getTexture("gizmos.png"), 24, 48, 3, 0));
         for(Entity e : entities) {
             if(e.getComponent(SpriteRenderer.class) != null) {
                 SpriteRenderer spriteRenderer = e.getComponent(SpriteRenderer.class);

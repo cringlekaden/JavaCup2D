@@ -2,7 +2,7 @@ package Rendering;
 
 import Core.Window;
 import Util.AssetPool;
-import Util.JMath;
+import Util.JCMath;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -125,7 +125,7 @@ public class DebugDraw {
         };
         if(rotation != 0.0f) {
             for(Vector2f vertex : vertices)
-                JMath.rotate(vertex, rotation, center);
+                JCMath.rotate(vertex, rotation, center);
         }
         addLine2D(vertices[0], vertices[1], color, lifetime);
         addLine2D(vertices[1], vertices[2], color, lifetime);
@@ -147,7 +147,7 @@ public class DebugDraw {
         int currentAngle = 0;
         for(int i = 0; i < points.length; i++) {
             Vector2f current = new Vector2f(radius, 0);
-            JMath.rotate(current, currentAngle, new Vector2f());
+            JCMath.rotate(current, currentAngle, new Vector2f());
             points[i] = new Vector2f(current).add(center);
             if(i > 0)
                 addLine2D(points[i - 1], points[i], color, lifetime);
