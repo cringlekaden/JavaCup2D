@@ -20,9 +20,9 @@ public class ImGuiLayer {
     private final long windowPtr;
     private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
-    private GameViewWindow gameViewWindow;
-    private PropertiesWindow propertiesWindow;
-    private MenuBar menuBar;
+    private final GameViewWindow gameViewWindow;
+    private final PropertiesWindow propertiesWindow;
+    private final MenuBar menuBar;
 
     public ImGuiLayer(long windowPtr, PickingTexture pickingTexture) {
         this.windowPtr = windowPtr;

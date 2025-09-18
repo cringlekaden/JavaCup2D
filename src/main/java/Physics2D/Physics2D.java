@@ -15,12 +15,12 @@ import org.joml.Vector2f;
 
 public class Physics2D {
 
-    private Vec2 gravity = new Vec2(0, -10);
-    private World world = new World(gravity);
-    private int velocityIterations = 16;
-    private int positionIterations = 6;
+    private final Vec2 gravity = new Vec2(0, -10);
+    private final World world = new World(gravity);
+    private final int velocityIterations = 16;
+    private final int positionIterations = 6;
     private float physicsTime = 0.0f;
-    private float physicsTimeStep = 1/60.0f;
+    private final float physicsTimeStep = 1/60.0f;
 
     public void add(Entity entity) {
         RigidBody2D rb = entity.getComponent(RigidBody2D.class);

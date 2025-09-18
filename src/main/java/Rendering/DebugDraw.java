@@ -10,17 +10,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class DebugDraw {
 
-    private static int MAX_LINES = 5000;
-    private static List<Line2D> lines = new ArrayList<>();
-    private static float[] vertices = new float[MAX_LINES * 12];
-    private static Shader shader = AssetPool.getShader("debug");
+    private static final int MAX_LINES = 5000;
+    private static final List<Line2D> lines = new ArrayList<>();
+    private static final float[] vertices = new float[MAX_LINES * 12];
+    private static final Shader shader = AssetPool.getShader("debug");
     private static int vaoID;
     private static int vboID;
     private static boolean started = false;

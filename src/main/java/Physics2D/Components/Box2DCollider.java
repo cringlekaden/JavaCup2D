@@ -1,6 +1,5 @@
 package Physics2D.Components;
 
-import Components.Component;
 import Rendering.DebugDraw;
 import org.joml.Vector2f;
 

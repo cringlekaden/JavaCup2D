@@ -13,11 +13,11 @@ public class MouseListener {
 
     private static MouseListener instance;
 
-    private Vector2f gameViewportPosition;
-    private Vector2f gameViewportSize;
+    private final Vector2f gameViewportPosition;
+    private final Vector2f gameViewportSize;
     private double scrollX, scrollY, x, y, lastX, lastY, worldX, worldY, lastWorldX, lastWorldY;
     private int mouseButtonsDown = 0;
-    private boolean[] mouseButtonPressed;
+    private final boolean[] mouseButtonPressed;
     private boolean isDragging;
 
     private MouseListener() {

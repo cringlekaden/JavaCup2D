@@ -23,12 +23,13 @@ public class Window implements Observer {
     private static Window instance;
     private static Scene currentScene;
 
-    private ImGuiLayer imGuiLayer;
-    private Framebuffer framebuffer;
-    private PickingTexture pickingTexture;
-    private String title;
-    private int width, height;
-    private long windowPointer;
+    private final ImGuiLayer imGuiLayer;
+    private final Framebuffer framebuffer;
+    private final PickingTexture pickingTexture;
+    private final String title;
+    private final int width;
+    private final int height;
+    private final long windowPointer;
     private boolean isSceneRunning = false;
 
     private Window() {
@@ -105,6 +106,7 @@ public class Window implements Observer {
 
     public void run() {
         Window.changeScene(new LevelEditorInitializer());
+        System.out.println("OpenGL Version: " + glGetString(GL_VERSION));
         System.out.println("LWJGL Version: " + Version.getVersion());
         float beginTime = (float)glfwGetTime();
         float endTime;

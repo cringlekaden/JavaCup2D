@@ -12,7 +12,7 @@ public class Renderer {
     private final int MAX_BATCH_SIZE = 1000;
 
     private static Shader currentShader;
-    private List<RenderBatch> batches;
+    private final List<RenderBatch> batches;
 
     public Renderer() {
         batches = new ArrayList<>();
@@ -28,8 +28,8 @@ public class Renderer {
 
     public void render() {
         currentShader.bind();
-        for(RenderBatch batch : batches)
-            batch.render();
+        for(int i = 0; i < batches.size(); i++)
+            batches.get(i).render();
     }
 
     public void addSpriteEntity(Entity entity) {
@@ -51,7 +51,7 @@ public class Renderer {
             }
         }
         if(!added) {
-            RenderBatch batch = new RenderBatch(MAX_BATCH_SIZE, spriteRenderer.entity.transform.zIndex);
+            RenderBatch batch = new RenderBatch(this, MAX_BATCH_SIZE, spriteRenderer.entity.transform.zIndex);
             batch.start();
             batches.add(batch);
             batch.addSprite(spriteRenderer);

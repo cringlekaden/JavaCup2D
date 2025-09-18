@@ -58,8 +58,7 @@ public class Transform extends Component {
     @Override
     public boolean equals(Object o) {
         if(o == null) return false;
-        if(!(o instanceof Transform)) return false;
-        Transform other = (Transform) o;
+        if(!(o instanceof Transform other)) return false;
         return other.position.x == position.x && other.scale.x == scale.x && other.position.y == position.y && other.scale.y == scale.y
                 && other.rotation == rotation && other.zIndex == zIndex;
     }

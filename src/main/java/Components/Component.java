@@ -3,6 +3,7 @@ package Components;
 import Core.Entity;
 import Editor.JCImGui;
 import imgui.ImGui;
+import imgui.type.ImInt;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -37,7 +38,7 @@ public abstract class Component {
                 boolean isPrivate = Modifier.isPrivate(field.getModifiers());
                 if(isPrivate)
                     field.setAccessible(true);
-                Class type = field.getType();
+                Class<?> type = field.getType();
                 Object value = field.get(this);
                 String name = field.getName();
                 if(type == int.class) {
@@ -59,6 +60,15 @@ public abstract class Component {
                 } else if(type == Vector4f.class) {
                     Vector4f val = (Vector4f) value;
                     JCImGui.drawColorControl4(name, val);
+                } else if (type.isEnum()) {
+                    @SuppressWarnings("unchecked")
+                    Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) type;
+                    String[] enumValues = getEnumValues(enumType);
+                    String enumTypeName = ((Enum<?>) value).name();
+                    ImInt index = new ImInt(indexOf(enumTypeName, enumValues));
+                    if (ImGui.combo(field.getName(), index, enumValues, enumValues.length)) {
+                        field.set(this, enumType.getEnumConstants()[index.get()]);
+                    }
                 }
                 if(isPrivate)
                     field.setAccessible(false);
@@ -79,4 +89,19 @@ public abstract class Component {
         return uid;
     }
 
+    private String[] getEnumValues(Class<? extends Enum<?>> enumType) {
+        Enum<?>[] constants = enumType.getEnumConstants();
+        String[] enumValues = new String[constants.length];
+        for (int i = 0; i < constants.length; i++)
+            enumValues[i] = constants[i].name();
+        return enumValues;
+    }
+
+    private int indexOf(String string, String[] array) {
+        for(int i = 0; i < array.length; i++) {
+            if(string.equals(array[i]))
+                return i;
+        }
+        return -1;
+    }
 }

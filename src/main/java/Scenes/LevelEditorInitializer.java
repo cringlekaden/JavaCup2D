@@ -66,7 +66,7 @@ public class LevelEditorInitializer extends SceneInitializer {
             int id = sprite.getTextureID();
             Vector2f[] texCoords = sprite.getTextureCoords();
             if(ImGui.imageButton("imageButton"+i, id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y)) {
-                Entity entity = Prefabs.generateSpriteEntity(sprite, 32, 32);
+                Entity entity = Prefabs.generateSpriteEntity(sprite, 0.25f, 0.25f);
                 levelEditorStuff.getComponent(MouseControls.class).pickupEntity(entity);
             }
             ImVec2 lastButtonPos = new ImVec2();

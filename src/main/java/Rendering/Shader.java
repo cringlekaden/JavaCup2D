@@ -4,19 +4,15 @@ import org.joml.*;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 
 public class Shader {
 
-    private String filename;
+    private final String filename;
     private String vertexSource;
     private String fragmentSource;
     private boolean isBound = false;

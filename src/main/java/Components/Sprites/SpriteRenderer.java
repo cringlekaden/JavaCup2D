@@ -4,13 +4,12 @@ import Components.Component;
 import Components.Transform;
 import Editor.JCImGui;
 import Rendering.Texture;
-import imgui.ImGui;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 public class SpriteRenderer extends Component {
 
-    private Vector4f color = new Vector4f(1, 1, 1, 1);
+    private final Vector4f color = new Vector4f(1, 1, 1, 1);
     private Sprite sprite = new Sprite();
     private transient Transform lastTransform;
     private transient boolean isDirty = true;

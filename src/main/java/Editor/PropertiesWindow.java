@@ -1,7 +1,6 @@
 package Editor;
 
 import Components.NonPickable;
-import Components.Sprites.SpriteRenderer;
 import Core.Entity;
 import Core.MouseListener;
 import Physics2D.Components.Box2DCollider;
@@ -16,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 public class PropertiesWindow {
 
     private Entity currentEntity = null;
-    private PickingTexture pickingTexture;
+    private final PickingTexture pickingTexture;
     private float debounceTime = 0.2f;
 
     public PropertiesWindow(PickingTexture pickingTexture) {

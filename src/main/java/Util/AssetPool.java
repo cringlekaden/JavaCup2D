@@ -4,15 +4,14 @@ import Components.Sprites.Spritesheet;
 import Rendering.Shader;
 import Rendering.Texture;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AssetPool {
 
-    private static Map<String, Shader> shaders = new HashMap<>();
-    private static Map<String, Texture> textures = new HashMap<>();
-    private static Map<String, Spritesheet> spritesheets = new HashMap<>();
+    private static final Map<String, Shader> shaders = new HashMap<>();
+    private static final Map<String, Texture> textures = new HashMap<>();
+    private static final Map<String, Spritesheet> spritesheets = new HashMap<>();
 
     public static Shader getShader(String name) {
         if(shaders.containsKey(name))

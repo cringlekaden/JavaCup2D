@@ -1,7 +1,12 @@
 package Core;
 
 import Components.Component;
+import Components.ComponentTypeAdapter;
+import Components.Sprites.SpriteRenderer;
 import Components.Transform;
+import Util.AssetPool;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import imgui.ImGui;
 
 import java.util.*;
@@ -9,8 +14,8 @@ import java.util.*;
 public class Entity {
 
     private static int ID_COUNTER = 0;
-    private String name;
-    private List<Component> components;
+    private final String name;
+    private final List<Component> components;
     private int uid = -1;
     private boolean doSerialize = true;
     private boolean isDead = false;
@@ -49,6 +54,19 @@ public class Entity {
         for(int i = 0; i < components.size(); i++) {
             components.get(i).destroy();
         }
+    }
+
+    public Entity duplicate() {
+        Gson gson = new GsonBuilder().registerTypeAdapter(Component.class, new ComponentTypeAdapter()).registerTypeAdapter(Entity.class, new EntityTypeAdapter()).create();
+        String entityJson = gson.toJson(this);
+        Entity duplicate = gson.fromJson(entityJson, Entity.class);
+        duplicate.generateID();
+        for(Component component : duplicate.getAllComponents())
+            component.generateID();
+        SpriteRenderer spriteRenderer = duplicate.getComponent(SpriteRenderer.class);
+        if(spriteRenderer != null && spriteRenderer.getTexture() != null)
+            spriteRenderer.setTexture(AssetPool.getTexture(spriteRenderer.getTexture().getFilename()));
+        return duplicate;
     }
 
     public void addComponent(Component component) {
@@ -98,6 +116,10 @@ public class Entity {
 
     public int getID() {
         return uid;
+    }
+
+    public void generateID() {
+        uid = ID_COUNTER++;
     }
 
     public static void init(int maxID) {

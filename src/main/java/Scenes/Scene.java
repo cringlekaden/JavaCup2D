@@ -23,10 +23,10 @@ import java.util.Optional;
 public class Scene {
 
     private Camera camera;
-    private Renderer renderer;
-    private Physics2D physics2D;
-    private SceneInitializer sceneInitializer;
-    private List<Entity> entities = new ArrayList<>();
+    private final Renderer renderer;
+    private final Physics2D physics2D;
+    private final SceneInitializer sceneInitializer;
+    private final List<Entity> entities = new ArrayList<>();
     private boolean isRunning = false;
 
     public Scene(SceneInitializer sceneInitializer) {
@@ -46,7 +46,7 @@ public class Scene {
     }
 
     public void init() {
-        this.camera = new Camera(new Vector2f(-250, 0));
+        this.camera = new Camera(new Vector2f());
         sceneInitializer.loadResources(this);
         sceneInitializer.init(this);
     }

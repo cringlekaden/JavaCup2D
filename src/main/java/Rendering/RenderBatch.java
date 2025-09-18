@@ -3,7 +3,6 @@ package Rendering;
 import Components.Sprites.SpriteRenderer;
 import Core.Entity;
 import Core.Window;
-import Util.AssetPool;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -13,7 +12,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
@@ -33,14 +31,20 @@ public class RenderBatch implements Comparable<RenderBatch> {
     private final int VERTEX_SIZE = 10;
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
-    private List<Texture> textures;
-    private SpriteRenderer[] spriteRenderers;
-    private int numSprites, vaoID, vboID, maxBatchSize, zIndex;
-    private float[] vertices;
-    private int[] texSlots = {0, 1, 2, 3, 4, 5, 6, 7};
+    private final List<Texture> textures;
+    private final SpriteRenderer[] spriteRenderers;
+    private Renderer renderer;
+    private int numSprites;
+    private int vaoID;
+    private int vboID;
+    private final int maxBatchSize;
+    private final int zIndex;
+    private final float[] vertices;
+    private final int[] texSlots = {0, 1, 2, 3, 4, 5, 6, 7};
     private boolean isFull;
 
-    public RenderBatch(int maxBatchSize, int zIndex) {
+    public RenderBatch(Renderer renderer, int maxBatchSize, int zIndex) {
+        this.renderer = renderer;
         this.maxBatchSize = maxBatchSize;
         this.zIndex = zIndex;
         spriteRenderers = new SpriteRenderer[maxBatchSize];
@@ -55,7 +59,7 @@ public class RenderBatch implements Comparable<RenderBatch> {
         glBindVertexArray(vaoID);
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
         int iboID = glGenBuffers();
         int[] indices = generateIndices();
         IntBuffer intBuffer = BufferUtils.createIntBuffer(indices.length);
@@ -82,6 +86,11 @@ public class RenderBatch implements Comparable<RenderBatch> {
                 loadVertexProperties(i);
                 sprite.isClean();
                 needsRebuffer = true;
+            }
+            if(sprite.entity.transform.zIndex != zIndex) {
+                destroyIfExists(sprite.entity);
+                renderer.addSpriteEntity(sprite.entity);
+                i--;
             }
         }
         if(needsRebuffer) {
@@ -176,12 +185,12 @@ public class RenderBatch implements Comparable<RenderBatch> {
             transform.rotate((float)Math.toRadians(spriteRenderer.entity.transform.rotation), 0, 0, 1);
             transform.scale(spriteRenderer.entity.transform.scale.x, spriteRenderer.entity.transform.scale.y, 1);
         }
-        float xAdd = 1.0f;
-        float yAdd = 1.0f;
+        float xAdd = 0.5f;
+        float yAdd = 0.5f;
         for(int i = 0; i < 4; i++) {
-            if(i == 1) yAdd = 0.0f;
-            if(i == 2) xAdd = 0.0f;
-            if(i == 3) yAdd = 1.0f;
+            if(i == 1) yAdd = -0.5f;
+            if(i == 2) xAdd = -0.5f;
+            if(i == 3) yAdd = 0.5f;
             Vector4f currentPosition = new Vector4f(spriteRenderer.entity.transform.position.x + (xAdd * spriteRenderer.entity.transform.scale.x),
                     spriteRenderer.entity.transform.position.y + (yAdd * spriteRenderer.entity.transform.scale.y), 0, 1);
             if(hasRotation)
