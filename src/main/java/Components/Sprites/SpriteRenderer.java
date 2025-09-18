@@ -29,6 +29,14 @@ public class SpriteRenderer extends Component {
     }
 
     @Override
+    public void editorUpdate(float dt) {
+        if(!lastTransform.equals(entity.transform)) {
+            entity.transform.copy(lastTransform);
+            isDirty = true;
+        }
+    }
+
+    @Override
     public void imgui() {
         if(JCImGui.drawColorControl4("Color Picker", color))
             isDirty = true;

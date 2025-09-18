@@ -11,13 +11,13 @@ public class ScaleGizmo extends Gizmo {
     }
 
     @Override
-    public void update(float dt) {
+    public void editorUpdate(float dt) {
         if(currentEntity != null) {
             if(xAxisActive && !yAxisActive)
                 currentEntity.transform.scale.x -= MouseListener.getWorldDX();
             else if(yAxisActive)
                 currentEntity.transform.scale.y -= MouseListener.getWorldDY();
         }
-        super.update(dt);
+        super.editorUpdate(dt);
     }
 }

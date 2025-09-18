@@ -9,7 +9,7 @@ public class RigidBody2D extends Component {
 
     private BodyType bodyType = BodyType.Dynamic;
     private Vector2f velocity = new Vector2f();
-    private Body rawBody = null;
+    private transient Body rawBody = null;
     private float angularDamping = 0.8f;
     private float linearDamping = 0.9f;
     private float mass = 0.0f;

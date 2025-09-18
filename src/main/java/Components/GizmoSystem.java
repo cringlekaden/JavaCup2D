@@ -23,7 +23,7 @@ public class GizmoSystem extends Component {
     }
 
     @Override
-    public void update(float dt) {
+    public void editorUpdate(float dt) {
         if(usingGizmo == 0) {
             entity.getComponent(TranslateGizmo.class).setUsing(true);
             entity.getComponent(ScaleGizmo.class).setUsing(false);

@@ -1,7 +1,6 @@
-package Core;
+package Editor;
 
-import Editor.GameViewWindow;
-import Editor.PropertiesWindow;
+import Core.Window;
 import Rendering.PickingTexture;
 import Scenes.Scene;
 import imgui.*;
@@ -23,11 +22,13 @@ public class ImGuiLayer {
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
     private GameViewWindow gameViewWindow;
     private PropertiesWindow propertiesWindow;
+    private MenuBar menuBar;
 
     public ImGuiLayer(long windowPtr, PickingTexture pickingTexture) {
         this.windowPtr = windowPtr;
-        this.gameViewWindow = new GameViewWindow();
-        this.propertiesWindow = new PropertiesWindow(pickingTexture);
+        gameViewWindow = new GameViewWindow();
+        propertiesWindow = new PropertiesWindow(pickingTexture);
+        menuBar = new MenuBar();
     }
 
     public void init() {
@@ -93,6 +94,7 @@ public class ImGuiLayer {
         gameViewWindow.imgui();
         propertiesWindow.update(dt, scene);
         propertiesWindow.imgui();
+        menuBar.imgui();
         ImGui.end();
         endFrame();
     }

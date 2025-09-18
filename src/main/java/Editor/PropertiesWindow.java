@@ -4,6 +4,9 @@ import Components.NonPickable;
 import Components.Sprites.SpriteRenderer;
 import Core.Entity;
 import Core.MouseListener;
+import Physics2D.Components.Box2DCollider;
+import Physics2D.Components.Circle2DCollider;
+import Physics2D.Components.RigidBody2D;
 import Rendering.PickingTexture;
 import Scenes.Scene;
 import imgui.ImGui;
@@ -40,9 +43,28 @@ public class PropertiesWindow {
     public void imgui() {
         if(currentEntity != null) {
             ImGui.begin("Properties");
+            if(ImGui.beginPopupContextWindow("AddComponent")) {
+                if(ImGui.menuItem("Add Rigidbody")) {
+                    if(currentEntity.getComponent(RigidBody2D.class) == null)
+                        currentEntity.addComponent(new RigidBody2D());
+                }
+                if(ImGui.menuItem("Add Box Collider")) {
+                    if(currentEntity.getComponent(Box2DCollider.class) == null && currentEntity.getComponent(Circle2DCollider.class) == null)
+                        currentEntity.addComponent(new Box2DCollider());
+                }
+                if(ImGui.menuItem("Add Circle Collider")) {
+                    if(currentEntity.getComponent(Circle2DCollider.class) == null && currentEntity.getComponent(Box2DCollider.class) == null)
+                        currentEntity.addComponent(new Circle2DCollider());
+                }
+                ImGui.endPopup();
+            }
             currentEntity.imgui();
             ImGui.end();
         }
+    }
+
+    public void setCurrentEntity(Entity entity) {
+        currentEntity = entity;
     }
 
     public Entity getCurrentEntity() {

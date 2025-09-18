@@ -63,11 +63,9 @@ public class Camera {
 
     public void setZoom(float zoom) {
         this.zoom = zoom;
-        setProjection();
     }
 
     public void addZoom(float zoom) {
         this.zoom += zoom;
-        setProjection();
     }
 }

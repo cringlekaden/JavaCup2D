@@ -13,6 +13,7 @@ public class Entity {
     private List<Component> components;
     private int uid = -1;
     private boolean doSerialize = true;
+    private boolean isDead = false;
     public transient Transform transform;
 
     public Entity(String name) {
@@ -21,19 +22,32 @@ public class Entity {
         uid = ID_COUNTER++;
     }
 
-    public void update(float dt) {
-        for (Component component : components) component.update(dt);
-    }
-
     public void start() {
         for(int i = 0; i < components.size(); i++)
             components.get(i).start();
+    }
+
+    public void update(float dt) {
+        for (Component component : components)
+            component.update(dt);
+    }
+
+    public void editorUpdate(float dt) {
+        for (Component component : components)
+            component.editorUpdate(dt);
     }
 
     public void imgui() {
         for(Component c : components) {
             if(ImGui.collapsingHeader(c.getClass().getSimpleName()))
                 c.imgui();
+        }
+    }
+
+    public void destroy() {
+        isDead = true;
+        for(int i = 0; i < components.size(); i++) {
+            components.get(i).destroy();
         }
     }
 
@@ -64,6 +78,10 @@ public class Entity {
                 return;
             }
         }
+    }
+
+    public boolean isDead() {
+        return isDead;
     }
 
     public List<Component> getAllComponents() {

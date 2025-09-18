@@ -32,13 +32,13 @@ public class Renderer {
             batch.render();
     }
 
-    public void add(Entity entity) {
+    public void addSpriteEntity(Entity entity) {
         SpriteRenderer spriteRenderer = entity.getComponent(SpriteRenderer.class);
         if(spriteRenderer != null)
-            add(spriteRenderer);
+            addSpriteEntity(spriteRenderer);
     }
 
-    public void add(SpriteRenderer spriteRenderer) {
+    public void addSpriteEntity(SpriteRenderer spriteRenderer) {
         boolean added = false;
         for(RenderBatch batch : batches) {
             if(!batch.isFull() && batch.zIndex() == spriteRenderer.entity.transform.zIndex) {
@@ -56,6 +56,14 @@ public class Renderer {
             batches.add(batch);
             batch.addSprite(spriteRenderer);
             Collections.sort(batches);
+        }
+    }
+
+    public void destroyEntity(Entity entity) {
+        if(entity.getComponent(SpriteRenderer.class) == null) return;
+        for(RenderBatch batch : batches) {
+            if(batch.destroyIfExists(entity))
+                return;
         }
     }
 }

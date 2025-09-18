@@ -1,6 +1,7 @@
 package Rendering;
 
 import Components.Sprites.SpriteRenderer;
+import Core.Entity;
 import Core.Window;
 import Util.AssetPool;
 import org.jetbrains.annotations.NotNull;
@@ -122,6 +123,21 @@ public class RenderBatch implements Comparable<RenderBatch> {
         loadVertexProperties(index);
         if(numSprites >= maxBatchSize)
             isFull = true;
+    }
+
+    public boolean destroyIfExists(Entity entity) {
+        SpriteRenderer spriteRenderer = entity.getComponent(SpriteRenderer.class);
+        for(int i = 0; i < numSprites; i++) {
+            if(spriteRenderers[i] == spriteRenderer) {
+                for(int j = i; j < numSprites - 1; j++) {
+                    spriteRenderers[j] = spriteRenderers[j + 1];
+                    spriteRenderers[j].setDirty();
+                }
+                numSprites--;
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isFull() {

@@ -1,9 +1,13 @@
 package Core;
 
+import Editor.ImGuiLayer;
+import Observers.EventSystem;
+import Observers.Events.Event;
+import Observers.Observer;
 import Rendering.*;
-import Scenes.LevelEditorScene;
-import Scenes.LevelScene;
+import Scenes.LevelEditorInitializer;
 import Scenes.Scene;
+import Scenes.SceneInitializer;
 import Util.AssetPool;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -14,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
+public class Window implements Observer {
 
     private static Window instance;
     private static Scene currentScene;
@@ -25,11 +29,13 @@ public class Window {
     private String title;
     private int width, height;
     private long windowPointer;
+    private boolean isSceneRunning = false;
 
     private Window() {
         this.width = 1920;
         this.height = 1080;
-        this.title = "JavaCup2D | 0.0.0a";
+        this.title = "JavaCup2D | 0.1.3a";
+        EventSystem.addObserver(this);
         GLFWErrorCallback.createPrint(System.err).set();
         if(!glfwInit())
             throw new IllegalStateException("GLFW initialization failed...");
@@ -69,18 +75,11 @@ public class Window {
         glViewport(0, 0, 2560, 1440);
     }
 
-    public static void changeScene(int scene) {
-        switch (scene) {
-            case 0:
-                currentScene = new LevelEditorScene();
-                break;
-            case 1:
-                currentScene = new LevelScene();
-                break;
-            default:
-                assert false : "Invalid scene: " + scene + "...";
-                break;
-        }
+    public static void changeScene(SceneInitializer sceneInitializer) {
+        if(currentScene != null)
+            currentScene.destroy();
+        getImGuiLayer().getPropertiesWindow().setCurrentEntity(null);
+        currentScene = new Scene(sceneInitializer);
         currentScene.load();
         currentScene.init();
         currentScene.start();
@@ -105,7 +104,7 @@ public class Window {
     }
 
     public void run() {
-        Window.changeScene(0);
+        Window.changeScene(new LevelEditorInitializer());
         System.out.println("LWJGL Version: " + Version.getVersion());
         float beginTime = (float)glfwGetTime();
         float endTime;
@@ -130,7 +129,10 @@ public class Window {
             if(dt >= 0) {
                 DebugDraw.draw();
                 Renderer.bindShader(defaultShader);
-                currentScene.update(dt);
+                if(isSceneRunning)
+                    currentScene.update(dt);
+                else
+                    currentScene.editorUpdate(dt);
                 currentScene.render();
             }
             framebuffer.unbind();
@@ -141,7 +143,6 @@ public class Window {
             beginTime = endTime;
             MouseListener.endFrame();
         }
-        currentScene.saveExit();
         imGuiLayer.destroyImGui();
         glfwFreeCallbacks(windowPointer);
         glfwDestroyWindow(windowPointer);
@@ -159,5 +160,22 @@ public class Window {
 
     public static ImGuiLayer getImGuiLayer() {
         return getInstance().imGuiLayer;
+    }
+
+    @Override
+    public void onNotify(Entity entity, Event event) {
+        switch (event.eventType) {
+            case EngineStartPlay -> {
+                isSceneRunning = true;
+                currentScene.save();
+                Window.changeScene(new LevelEditorInitializer());
+            }
+            case EngineStopPlay -> {
+                isSceneRunning = false;
+                Window.changeScene(new LevelEditorInitializer());
+            }
+            case SceneSave -> currentScene.save();
+            case SceneLoad -> Window.changeScene(new LevelEditorInitializer());
+        }
     }
 }

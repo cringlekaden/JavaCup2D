@@ -10,38 +10,40 @@ import imgui.ImGui;
 import imgui.ImVec2;
 import org.joml.Vector2f;
 
-public class LevelEditorScene extends Scene {
+public class LevelEditorInitializer extends SceneInitializer {
 
     private Spritesheet sprites;
-    private Entity levelEditorStuff = createEntity("levelEditorStuff");
+    private Entity levelEditorStuff;
 
-    public LevelEditorScene() {
+    public LevelEditorInitializer() {
 
     }
 
     @Override
-    public void init() {
-        loadResources();
+    public void loadResources(Scene scene) {
+        AssetPool.getShader("default");
+        AssetPool.addSpritesheet("decorationsAndBlocks.png", new Spritesheet(AssetPool.getTexture("decorationsAndBlocks.png"), 16, 16, 81, 0));
+        AssetPool.addSpritesheet("gizmos.png", new Spritesheet(AssetPool.getTexture("gizmos.png"), 24, 48, 3, 0));
+        for(Entity e : scene.getEntities()) {
+            if(e.getComponent(SpriteRenderer.class) != null) {
+                SpriteRenderer spriteRenderer = e.getComponent(SpriteRenderer.class);
+                if(spriteRenderer.getTexture() != null)
+                    spriteRenderer.setTexture(AssetPool.getTexture(spriteRenderer.getTexture().getFilename()));
+            }
+        }
+    }
+
+    @Override
+    public void init(Scene scene) {
         sprites = AssetPool.getSpriteSheet("decorationsAndBlocks.png");
         Spritesheet gizmos = AssetPool.getSpriteSheet("gizmos.png");
-        this.camera = new Camera(new Vector2f(-250, 0));
+        levelEditorStuff = scene.createEntity("LevelEditorStuff");
+        levelEditorStuff.setNoSerialize();
         levelEditorStuff.addComponent(new MouseControls());
         levelEditorStuff.addComponent(new GridLines());
-        levelEditorStuff.addComponent(new EditorCamera(camera));
+        levelEditorStuff.addComponent(new EditorCamera(scene.getCamera()));
         levelEditorStuff.addComponent(new GizmoSystem(gizmos));
-        levelEditorStuff.start();
-    }
-
-    @Override
-    public void update(float dt) {
-        levelEditorStuff.update(dt);
-        for(Entity e : entities)
-            e.update(dt);
-    }
-
-    @Override
-    public void render() {
-        renderer.render();
+        scene.addEntityToScene(levelEditorStuff);
     }
 
     @Override
@@ -75,18 +77,5 @@ public class LevelEditorScene extends Scene {
                 ImGui.sameLine();
         }
         ImGui.end();
-    }
-
-    private void loadResources() {
-        AssetPool.getShader("default");
-        AssetPool.addSpritesheet("decorationsAndBlocks.png", new Spritesheet(AssetPool.getTexture("decorationsAndBlocks.png"), 16, 16, 81, 0));
-        AssetPool.addSpritesheet("gizmos.png", new Spritesheet(AssetPool.getTexture("gizmos.png"), 24, 48, 3, 0));
-        for(Entity e : entities) {
-            if(e.getComponent(SpriteRenderer.class) != null) {
-                SpriteRenderer spriteRenderer = e.getComponent(SpriteRenderer.class);
-                if(spriteRenderer.getTexture() != null)
-                    spriteRenderer.setTexture(AssetPool.getTexture(spriteRenderer.getTexture().getFilename()));
-            }
-        }
     }
 }

@@ -6,10 +6,11 @@ import Components.Transform;
 import Core.Camera;
 import Core.Entity;
 import Core.EntityTypeAdapter;
+import Physics2D.Physics2D;
 import Rendering.Renderer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import imgui.ImGui;
+import org.joml.Vector2f;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,57 +20,78 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class Scene {
+public class Scene {
 
-    protected Camera camera;
-    protected Renderer renderer = new Renderer();
-    protected List<Entity> entities = new ArrayList<>();
-    protected boolean isLoaded = false;
+    private Camera camera;
+    private Renderer renderer;
+    private Physics2D physics2D;
+    private SceneInitializer sceneInitializer;
+    private List<Entity> entities = new ArrayList<>();
     private boolean isRunning = false;
 
-    public Scene() {
+    public Scene(SceneInitializer sceneInitializer) {
+        this.sceneInitializer = sceneInitializer;
+        physics2D = new Physics2D();
+        renderer = new Renderer();
     }
 
     public void start() {
-        for(Entity entity : entities) {
+        for(int i = 0; i < entities.size(); i++) {
+            Entity entity = entities.get(i);
             entity.start();
-            renderer.add(entity);
+            renderer.addSpriteEntity(entity);
+            physics2D.add(entity);
         }
         isRunning = true;
     }
 
-    public void addEntityToScene(Entity entity) {
-        if(!isRunning)
-            entities.add(entity);
-        else {
-            entities.add(entity);
-            entity.start();
-            renderer.add(entity);
+    public void init() {
+        this.camera = new Camera(new Vector2f(-250, 0));
+        sceneInitializer.loadResources(this);
+        sceneInitializer.init(this);
+    }
+
+    public void update(float dt) {
+        camera.setProjection();
+        physics2D.update(dt);
+        for(int i = 0; i < entities.size(); i++) {
+            Entity entity = entities.get(i);
+            entity.update(dt);
+            if(entity.isDead()) {
+                entities.remove(i);
+                renderer.destroyEntity(entity);
+                physics2D.destroyEntity(entity);
+                i--;
+            }
         }
     }
 
-    public Entity getEntityByID(int id) {
-        Optional<Entity> result = entities.stream().filter(entity -> entity.getID() == id).findFirst();
-        return result.orElse(null);
+    public void editorUpdate(float dt) {
+        camera.setProjection();
+        for(int i = 0; i < entities.size(); i++) {
+            Entity entity = entities.get(i);
+            entity.editorUpdate(dt);
+            if(entity.isDead()) {
+                entities.remove(i);
+                renderer.destroyEntity(entity);
+                physics2D.destroyEntity(entity);
+                i--;
+            }
+        }
     }
 
-    public Camera getCamera() {
-        return camera;
+    public void render() {
+        renderer.render();
     }
 
-    public abstract void init();
+    public void imgui() {
+        sceneInitializer.imgui();
+    }
 
-    public abstract void update(float dt);
-
-    public abstract void render();
-
-    public void imgui() {}
-
-    public Entity createEntity(String name) {
-        Entity entity = new Entity(name);
-        entity.addComponent(new Transform());
-        entity.transform = entity.getComponent(Transform.class);
-        return entity;
+    public void destroy() {
+        for(Entity entity : entities) {
+            entity.destroy();
+        }
     }
 
     public void load() {
@@ -101,11 +123,10 @@ public abstract class Scene {
             maxComponentID++;
             Entity.init(maxEntityID);
             Component.init(maxComponentID);
-            isLoaded = true;
         }
     }
 
-    public void saveExit() {
+    public void save() {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Component.class, new ComponentTypeAdapter())
@@ -123,6 +144,36 @@ public abstract class Scene {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public Entity createEntity(String name) {
+        Entity entity = new Entity(name);
+        entity.addComponent(new Transform());
+        entity.transform = entity.getComponent(Transform.class);
+        return entity;
+    }
+
+    public void addEntityToScene(Entity entity) {
+        if(!isRunning)
+            entities.add(entity);
+        else {
+            entities.add(entity);
+            entity.start();
+            renderer.addSpriteEntity(entity);
+            physics2D.add(entity);
+        }
+    }
+
+    public Entity getEntityByID(int id) {
+        Optional<Entity> result = entities.stream().filter(entity -> entity.getID() == id).findFirst();
+        return result.orElse(null);
+    }
+
+    public List<Entity> getEntities() {
+        return entities;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

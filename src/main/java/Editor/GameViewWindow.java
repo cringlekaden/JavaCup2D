@@ -2,6 +2,9 @@ package Editor;
 
 import Core.MouseListener;
 import Core.Window;
+import Observers.EventSystem;
+import Observers.Events.Event;
+import Observers.Events.EventType;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiHoveredFlags;
@@ -11,9 +14,20 @@ import org.joml.Vector2f;
 public class GameViewWindow {
 
     private static boolean hovered = false;
+    private boolean isPlaying = false;
 
     public void imgui() {
-        ImGui.begin("Game Viewport", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        ImGui.begin("Game Viewport", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.MenuBar);
+        ImGui.beginMenuBar();
+        if(ImGui.menuItem("Play", "", isPlaying, !isPlaying)) {
+            isPlaying = true;
+            EventSystem.notify(null, new Event(EventType.EngineStartPlay));
+        }
+        if(ImGui.menuItem("Stop", "", !isPlaying, isPlaying)) {
+            isPlaying = false;
+            EventSystem.notify(null, new Event(EventType.EngineStopPlay));
+        }
+        ImGui.endMenuBar();
         ImVec2 windowSize = getLargestSizeForViewport();
         ImVec2 windowPosition = getCenteredPositionForViewport(windowSize);
         ImGui.setCursorPos(windowPosition.x, windowPosition.y);
