@@ -14,6 +14,9 @@ import imgui.type.ImBoolean;
 import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class ImGuiLayer {
 
@@ -22,21 +25,24 @@ public class ImGuiLayer {
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
     private final GameViewWindow gameViewWindow;
     private final PropertiesWindow propertiesWindow;
+    private final SceneHierarchyWindow sceneHierarchyWindow;
     private final MenuBar menuBar;
 
     public ImGuiLayer(long windowPtr, PickingTexture pickingTexture) {
         this.windowPtr = windowPtr;
         gameViewWindow = new GameViewWindow();
         propertiesWindow = new PropertiesWindow(pickingTexture);
+        sceneHierarchyWindow = new SceneHierarchyWindow();
         menuBar = new MenuBar();
     }
 
     public void init() {
         ImGui.createContext();
         final ImGuiIO io = ImGui.getIO();
-        io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
         io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
+        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
         io.setBackendPlatformName("imgui_java_impl_glfw");
+        setStyle();
         // Clipboard support
         io.setSetClipboardTextFn(new ImStrConsumer() {@Override public void accept(final String s) {glfwSetClipboardString(windowPtr, s);}});
         io.setGetClipboardTextFn(new ImStrSupplier() {private final StringBuilder clipboard = new StringBuilder();@Override public String get() {String text = glfwGetClipboardString(windowPtr);if (text != null) {clipboard.setLength(0);clipboard.append(text);return clipboard.toString();}return "";}});
@@ -65,7 +71,6 @@ public class ImGuiLayer {
         io.setFontDefault(font);
         fontConfig.destroy();
         fontAtlas.build();
-        setStyle();
         imGuiGlfw.init(windowPtr, true);
         imGuiGl3.init("#version 410 core");
     }
@@ -77,6 +82,10 @@ public class ImGuiLayer {
     }
 
     public void endFrame() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, Window.getWidth(), Window.getHeight());
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ImGui.render();
         imGuiGl3.renderDrawData(ImGui.getDrawData());
         if(ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
@@ -94,8 +103,7 @@ public class ImGuiLayer {
         gameViewWindow.imgui();
         propertiesWindow.update(dt, scene);
         propertiesWindow.imgui();
-        menuBar.imgui();
-        ImGui.end();
+        sceneHierarchyWindow.imgui();
         endFrame();
     }
 
@@ -111,8 +119,10 @@ public class ImGuiLayer {
 
     private void setupDockspace() {
         int windowFlags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoDocking;
-        ImGui.setNextWindowPos(0.0f, 0.0f, ImGuiCond.Always);
-        ImGui.setNextWindowSize(Window.getWidth(), Window.getHeight());
+        ImGuiViewport mainViewPort = ImGui.getMainViewport();
+        ImGui.setNextWindowPos(mainViewPort.getWorkPosX(), mainViewPort.getWorkPosY());
+        ImGui.setNextWindowSize(mainViewPort.getWorkSizeX(), mainViewPort.getWorkSizeY());
+        ImGui.setNextWindowViewport(mainViewPort.getID());
         ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
         windowFlags |= ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse |
@@ -121,84 +131,83 @@ public class ImGuiLayer {
         ImGui.begin("Dockspace", new ImBoolean(true), windowFlags);
         ImGui.popStyleVar(2);
         ImGui.dockSpace(ImGui.getID("Dockspace"));
+        menuBar.imgui();
+        ImGui.end();
     }
 
     private void setStyle() {
         ImGuiStyle style = ImGui.getStyle();
 
-        // Rounding
-        style.setWindowRounding(3.0f);
-        style.setFrameRounding(2.0f);
-        style.setGrabRounding(2.0f);
-        style.setScrollbarRounding(3.0f);
+        // Rounding for flat style
+        style.setWindowRounding(0.0f);
+        style.setFrameRounding(0.0f);
+        style.setGrabRounding(0.0f);
+        style.setScrollbarRounding(0.0f);
+        style.setPopupRounding(0.0f);
 
         // Borders & padding
-        style.setWindowBorderSize(1.0f);
-        style.setFrameBorderSize(1.0f);
-        style.setPopupBorderSize(1.0f);
-
+        style.setWindowBorderSize(0.0f);
+        style.setFrameBorderSize(0.0f);
+        style.setPopupBorderSize(0.0f);
         style.setWindowPadding(8.0f, 8.0f);
-        style.setFramePadding(4.0f, 2.0f);
-        style.setItemSpacing(6.0f, 4.0f);
+        style.setFramePadding(5.0f, 3.0f);
+        style.setItemSpacing(8.0f, 4.0f);
 
-        // Colors
-        ImVec4[] colors = style.getColors();
+        // Colors (Hazel-inspired dark gray/black theme with subtle gray-green accents)
+        style.setColor(ImGuiCol.WindowBg, 0.10f, 0.105f, 0.11f, 1.00f);
+        style.setColor(ImGuiCol.ChildBg, 0.10f, 0.105f, 0.11f, 1.00f);
+        style.setColor(ImGuiCol.PopupBg, 0.08f, 0.085f, 0.09f, 0.94f);
+        style.setColor(ImGuiCol.DockingEmptyBg, 0.20f, 0.205f, 0.21f, 1.00f);
 
-        // Dockspace & window bg
-        colors[ImGuiCol.WindowBg]        = new ImVec4(0.11f, 0.11f, 0.12f, 1.0f);
-        colors[ImGuiCol.ChildBg]         = new ImVec4(0.15f, 0.15f, 0.16f, 1.0f);
-        colors[ImGuiCol.PopupBg]         = new ImVec4(0.11f, 0.11f, 0.12f, 0.94f);
-        colors[ImGuiCol.DockingEmptyBg]  = new ImVec4(0.15f, 0.15f, 0.16f, 1.0f);
+        style.setColor(ImGuiCol.Border, 0.20f, 0.205f, 0.21f, 0.50f);
+        style.setColor(ImGuiCol.Separator, 0.43f, 0.43f, 0.50f, 0.50f);
+        style.setColor(ImGuiCol.SeparatorHovered, 0.25f, 0.28f, 0.24f, 0.78f);  // Muted gray-green
+        style.setColor(ImGuiCol.SeparatorActive, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
 
-        // Borders & separators
-        colors[ImGuiCol.Border]          = new ImVec4(0.20f, 0.20f, 0.22f, 0.50f);
-        colors[ImGuiCol.Separator]       = new ImVec4(0.25f, 0.25f, 0.28f, 0.60f);
-        colors[ImGuiCol.SeparatorHovered]= new ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
-        colors[ImGuiCol.SeparatorActive] = new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
+        style.setColor(ImGuiCol.MenuBarBg, 0.14f, 0.14f, 0.14f, 1.00f);
 
-        // Menu bar
-        colors[ImGuiCol.MenuBarBg]       = new ImVec4(0.14f, 0.14f, 0.15f, 1.0f);
+        style.setColor(ImGuiCol.Header, 0.20f, 0.205f, 0.21f, 1.00f);
+        style.setColor(ImGuiCol.HeaderHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.HeaderActive, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green (to fix tab top highlight)
 
-        // Headers
-        colors[ImGuiCol.Header]          = new ImVec4(0.18f, 0.18f, 0.20f, 1.0f);
-        colors[ImGuiCol.HeaderHovered]   = new ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
-        colors[ImGuiCol.HeaderActive]    = new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
+        style.setColor(ImGuiCol.Button, 0.20f, 0.205f, 0.21f, 1.00f);
+        style.setColor(ImGuiCol.ButtonHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.ButtonActive, 0.15f, 0.1505f, 0.151f, 1.00f);
 
-        // Buttons
-        colors[ImGuiCol.Button]          = new ImVec4(0.20f, 0.22f, 0.24f, 1.0f);
-        colors[ImGuiCol.ButtonHovered]   = new ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
-        colors[ImGuiCol.ButtonActive]    = new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
+        style.setColor(ImGuiCol.FrameBg, 0.20f, 0.205f, 0.21f, 1.00f);
+        style.setColor(ImGuiCol.FrameBgHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.FrameBgActive, 0.15f, 0.1505f, 0.151f, 1.00f);
 
-        // Frames
-        colors[ImGuiCol.FrameBg]         = new ImVec4(0.16f, 0.16f, 0.18f, 1.0f);
-        colors[ImGuiCol.FrameBgHovered]  = new ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
-        colors[ImGuiCol.FrameBgActive]   = new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
+        // Tab colors (with muted gray-green for active/hovered to avoid blue and tone down green)
+        style.setColor(ImGuiCol.Tab, 0.15f, 0.1505f, 0.151f, 1.00f);
+        style.setColor(ImGuiCol.TabHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.TabActive, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.TabUnfocused, 0.15f, 0.1505f, 0.151f, 1.00f);
+        style.setColor(ImGuiCol.TabUnfocusedActive, 0.20f, 0.205f, 0.21f, 1.00f);
 
-        // Tabs
-        colors[ImGuiCol.Tab]             = new ImVec4(0.15f, 0.15f, 0.17f, 1.0f);
-        colors[ImGuiCol.TabHovered]      = new ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
-        colors[ImGuiCol.TabActive]       = new ImVec4(0.20f, 0.22f, 0.24f, 1.0f);
-        colors[ImGuiCol.TabUnfocused]    = new ImVec4(0.15f, 0.15f, 0.17f, 1.0f);
-        colors[ImGuiCol.TabUnfocusedActive] = new ImVec4(0.20f, 0.22f, 0.24f, 1.0f);
+        style.setColor(ImGuiCol.TitleBg, 0.15f, 0.1505f, 0.151f, 1.00f);
+        style.setColor(ImGuiCol.TitleBgActive, 0.15f, 0.1505f, 0.151f, 1.00f);
+        style.setColor(ImGuiCol.TitleBgCollapsed, 0.15f, 0.1505f, 0.151f, 1.00f);
 
-        // Title bar
-        colors[ImGuiCol.TitleBg]         = new ImVec4(0.11f, 0.11f, 0.12f, 1.0f);
-        colors[ImGuiCol.TitleBgActive]   = new ImVec4(0.11f, 0.11f, 0.12f, 1.0f);
-        colors[ImGuiCol.TitleBgCollapsed]= new ImVec4(0.11f, 0.11f, 0.12f, 1.0f);
+        style.setColor(ImGuiCol.ScrollbarBg, 0.02f, 0.02f, 0.02f, 0.53f);
+        style.setColor(ImGuiCol.ScrollbarGrab, 0.31f, 0.31f, 0.31f, 1.00f);
+        style.setColor(ImGuiCol.ScrollbarGrabHovered, 0.41f, 0.41f, 0.41f, 1.00f);
+        style.setColor(ImGuiCol.ScrollbarGrabActive, 0.51f, 0.51f, 0.51f, 1.00f);
 
-        // Scrollbars
-        colors[ImGuiCol.ScrollbarBg]     = new ImVec4(0.11f, 0.11f, 0.12f, 1.0f);
-        colors[ImGuiCol.ScrollbarGrab]   = new ImVec4(0.26f, 0.59f, 0.98f, 0.50f);
-        colors[ImGuiCol.ScrollbarGrabHovered] = new ImVec4(0.26f, 0.59f, 0.98f, 0.75f);
-        colors[ImGuiCol.ScrollbarGrabActive]  = new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
+        style.setColor(ImGuiCol.ResizeGrip, 0.20f, 0.205f, 0.21f, 0.25f);
+        style.setColor(ImGuiCol.ResizeGripHovered, 0.25f, 0.28f, 0.24f, 0.67f);  // Muted gray-green
+        style.setColor(ImGuiCol.ResizeGripActive, 0.38f, 0.3805f, 0.381f, 0.95f);
 
-        // Other accents
-        colors[ImGuiCol.ResizeGrip]      = new ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
-        colors[ImGuiCol.ResizeGripHovered]= new ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-        colors[ImGuiCol.ResizeGripActive] = new ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+        style.setColor(ImGuiCol.CheckMark, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.SliderGrab, 0.24f, 0.245f, 0.25f, 1.00f);
+        style.setColor(ImGuiCol.SliderGrabActive, 0.26f, 0.265f, 0.27f, 1.00f);
 
-        colors[ImGuiCol.CheckMark]       = new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
-        colors[ImGuiCol.SliderGrab]      = new ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
-        colors[ImGuiCol.SliderGrabActive]= new ImVec4(0.26f, 0.59f, 0.98f, 1.0f);
+        // Verify tab colors
+        ImVec4 tabActive = new ImVec4();
+        style.getColor(ImGuiCol.TabActive, tabActive);
+        System.out.println("TabActive color set to: R=" + tabActive.x + ", G=" + tabActive.y + ", B=" + tabActive.z + ", A=" + tabActive.w);
+        ImVec4 tabHovered = new ImVec4();
+        style.getColor(ImGuiCol.TabHovered, tabHovered);
+        System.out.println("TabHovered color set to: R=" + tabHovered.x + ", G=" + tabHovered.y + ", B=" + tabHovered.z + ", A=" + tabHovered.w);
     }
 }

@@ -125,4 +125,8 @@ public class Entity {
     public static void init(int maxID) {
         ID_COUNTER = maxID;
     }
+
+    public String getName() {
+        return name;
+    }
 }
