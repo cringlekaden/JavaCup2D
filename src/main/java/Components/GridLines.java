@@ -14,12 +14,12 @@ public class GridLines extends Component {
         Camera camera = Window.getScene().getCamera();
         Vector2f cameraPosition = camera.getPosition();
         Vector2f projectionSize = camera.getProjectionSize();
-        float firstX = ((int)(cameraPosition.x / Settings.GRID_WIDTH) - 1) * Settings.GRID_WIDTH;
-        float firstY = ((int)(cameraPosition.y / Settings.GRID_HEIGHT) - 1) * Settings.GRID_HEIGHT;
+        float firstX = ((int)Math.floor(cameraPosition.x / Settings.GRID_WIDTH) - 1) * Settings.GRID_HEIGHT;
+        float firstY = ((int)Math.floor(cameraPosition.y / Settings.GRID_HEIGHT) - 1) * Settings.GRID_HEIGHT;
         int verticalLines = (int)(projectionSize.x * camera.getZoom() / Settings.GRID_WIDTH) + 2;
         int horizontalLines = (int)(projectionSize.y * camera.getZoom() / Settings.GRID_HEIGHT) + 2;
-        float height = (int)(projectionSize.y * camera.getZoom()) + Settings.GRID_WIDTH * 2;
-        float width = (int)(projectionSize.x * camera.getZoom()) + Settings.GRID_HEIGHT * 2;
+        float width = (int)(projectionSize.x * camera.getZoom()) + Settings.GRID_WIDTH * 2;
+        float height = (int)(projectionSize.y * camera.getZoom()) + Settings.GRID_HEIGHT * 2;
         int maxLines = Math.max(verticalLines, horizontalLines);
         for(int i = 0; i < maxLines; i++) {
             float x = firstX + (Settings.GRID_WIDTH * i);

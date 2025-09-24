@@ -69,7 +69,7 @@ public class DebugDraw {
             }
         }
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, Arrays.copyOfRange(vertices, 0, lines.size() * 12));
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
         shader.bind();
         shader.setUniform("uProjection", Window.getScene().getCamera().getProjection());
         shader.setUniform("uView", Window.getScene().getCamera().getView());

@@ -138,12 +138,12 @@ public class ImGuiLayer {
     private void setStyle() {
         ImGuiStyle style = ImGui.getStyle();
 
-        // Rounding for flat style
+        // Flat, minimal rounding
         style.setWindowRounding(0.0f);
-        style.setFrameRounding(0.0f);
-        style.setGrabRounding(0.0f);
-        style.setScrollbarRounding(0.0f);
-        style.setPopupRounding(0.0f);
+        style.setFrameRounding(2.0f);
+        style.setGrabRounding(2.0f);
+        style.setScrollbarRounding(3.0f);
+        style.setPopupRounding(2.0f);
 
         // Borders & padding
         style.setWindowBorderSize(0.0f);
@@ -153,61 +153,67 @@ public class ImGuiLayer {
         style.setFramePadding(5.0f, 3.0f);
         style.setItemSpacing(8.0f, 4.0f);
 
-        // Colors (Hazel-inspired dark gray/black theme with subtle gray-green accents)
+        // Accent color (muted green)
+        float accentR = 0.35f;
+        float accentG = 0.65f;
+        float accentB = 0.35f;
+
+        // Backgrounds
         style.setColor(ImGuiCol.WindowBg, 0.10f, 0.105f, 0.11f, 1.00f);
         style.setColor(ImGuiCol.ChildBg, 0.10f, 0.105f, 0.11f, 1.00f);
         style.setColor(ImGuiCol.PopupBg, 0.08f, 0.085f, 0.09f, 0.94f);
         style.setColor(ImGuiCol.DockingEmptyBg, 0.20f, 0.205f, 0.21f, 1.00f);
 
+        // Borders & separators
         style.setColor(ImGuiCol.Border, 0.20f, 0.205f, 0.21f, 0.50f);
         style.setColor(ImGuiCol.Separator, 0.43f, 0.43f, 0.50f, 0.50f);
-        style.setColor(ImGuiCol.SeparatorHovered, 0.25f, 0.28f, 0.24f, 0.78f);  // Muted gray-green
-        style.setColor(ImGuiCol.SeparatorActive, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.SeparatorHovered, accentR, accentG, accentB, 0.78f);
+        style.setColor(ImGuiCol.SeparatorActive, accentR, accentG, accentB, 1.00f);
 
         style.setColor(ImGuiCol.MenuBarBg, 0.14f, 0.14f, 0.14f, 1.00f);
 
+        // Headers (hover/active = accent)
         style.setColor(ImGuiCol.Header, 0.20f, 0.205f, 0.21f, 1.00f);
-        style.setColor(ImGuiCol.HeaderHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
-        style.setColor(ImGuiCol.HeaderActive, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green (to fix tab top highlight)
+        style.setColor(ImGuiCol.HeaderHovered, accentR, accentG, accentB, 0.80f);
+        style.setColor(ImGuiCol.HeaderActive, accentR, accentG, accentB, 1.00f);
 
+        // Buttons
         style.setColor(ImGuiCol.Button, 0.20f, 0.205f, 0.21f, 1.00f);
-        style.setColor(ImGuiCol.ButtonHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
-        style.setColor(ImGuiCol.ButtonActive, 0.15f, 0.1505f, 0.151f, 1.00f);
+        style.setColor(ImGuiCol.ButtonHovered, accentR, accentG, accentB, 0.80f);
+        style.setColor(ImGuiCol.ButtonActive, accentR, accentG, accentB, 1.00f);
 
+        // Frames
         style.setColor(ImGuiCol.FrameBg, 0.20f, 0.205f, 0.21f, 1.00f);
-        style.setColor(ImGuiCol.FrameBgHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
-        style.setColor(ImGuiCol.FrameBgActive, 0.15f, 0.1505f, 0.151f, 1.00f);
+        style.setColor(ImGuiCol.FrameBgHovered, accentR, accentG, accentB, 0.60f);
+        style.setColor(ImGuiCol.FrameBgActive, accentR, accentG, accentB, 0.80f);
 
-        // Tab colors (with muted gray-green for active/hovered to avoid blue and tone down green)
+        // Tabs
         style.setColor(ImGuiCol.Tab, 0.15f, 0.1505f, 0.151f, 1.00f);
-        style.setColor(ImGuiCol.TabHovered, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
-        style.setColor(ImGuiCol.TabActive, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
+        style.setColor(ImGuiCol.TabHovered, accentR, accentG, accentB, 0.80f);
+        style.setColor(ImGuiCol.TabActive, accentR, accentG, accentB, 1.00f);
+        style.setColor(ImGuiCol.TabSelectedOverline, accentR, accentG + 0.1f, accentB, 1.00f); // lighter green
         style.setColor(ImGuiCol.TabUnfocused, 0.15f, 0.1505f, 0.151f, 1.00f);
         style.setColor(ImGuiCol.TabUnfocusedActive, 0.20f, 0.205f, 0.21f, 1.00f);
 
+        // Title
         style.setColor(ImGuiCol.TitleBg, 0.15f, 0.1505f, 0.151f, 1.00f);
         style.setColor(ImGuiCol.TitleBgActive, 0.15f, 0.1505f, 0.151f, 1.00f);
         style.setColor(ImGuiCol.TitleBgCollapsed, 0.15f, 0.1505f, 0.151f, 1.00f);
 
+        // Scrollbar
         style.setColor(ImGuiCol.ScrollbarBg, 0.02f, 0.02f, 0.02f, 0.53f);
         style.setColor(ImGuiCol.ScrollbarGrab, 0.31f, 0.31f, 0.31f, 1.00f);
-        style.setColor(ImGuiCol.ScrollbarGrabHovered, 0.41f, 0.41f, 0.41f, 1.00f);
-        style.setColor(ImGuiCol.ScrollbarGrabActive, 0.51f, 0.51f, 0.51f, 1.00f);
+        style.setColor(ImGuiCol.ScrollbarGrabHovered, accentR, accentG, accentB, 0.80f);
+        style.setColor(ImGuiCol.ScrollbarGrabActive, accentR, accentG, accentB, 1.00f);
 
+        // Resize grips
         style.setColor(ImGuiCol.ResizeGrip, 0.20f, 0.205f, 0.21f, 0.25f);
-        style.setColor(ImGuiCol.ResizeGripHovered, 0.25f, 0.28f, 0.24f, 0.67f);  // Muted gray-green
-        style.setColor(ImGuiCol.ResizeGripActive, 0.38f, 0.3805f, 0.381f, 0.95f);
+        style.setColor(ImGuiCol.ResizeGripHovered, accentR, accentG, accentB, 0.67f);
+        style.setColor(ImGuiCol.ResizeGripActive, accentR, accentG, accentB, 0.95f);
 
-        style.setColor(ImGuiCol.CheckMark, 0.25f, 0.28f, 0.24f, 1.00f);  // Muted gray-green
-        style.setColor(ImGuiCol.SliderGrab, 0.24f, 0.245f, 0.25f, 1.00f);
-        style.setColor(ImGuiCol.SliderGrabActive, 0.26f, 0.265f, 0.27f, 1.00f);
-
-        // Verify tab colors
-        ImVec4 tabActive = new ImVec4();
-        style.getColor(ImGuiCol.TabActive, tabActive);
-        System.out.println("TabActive color set to: R=" + tabActive.x + ", G=" + tabActive.y + ", B=" + tabActive.z + ", A=" + tabActive.w);
-        ImVec4 tabHovered = new ImVec4();
-        style.getColor(ImGuiCol.TabHovered, tabHovered);
-        System.out.println("TabHovered color set to: R=" + tabHovered.x + ", G=" + tabHovered.y + ", B=" + tabHovered.z + ", A=" + tabHovered.w);
+        // Misc
+        style.setColor(ImGuiCol.CheckMark, accentR, accentG, accentB, 1.00f);
+        style.setColor(ImGuiCol.SliderGrab, accentR, accentG, accentB, 0.70f);
+        style.setColor(ImGuiCol.SliderGrabActive, accentR, accentG, accentB, 1.00f);
     }
 }

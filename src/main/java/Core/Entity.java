@@ -14,8 +14,8 @@ import java.util.*;
 public class Entity {
 
     private static int ID_COUNTER = 0;
-    private final String name;
     private final List<Component> components;
+    private String name;
     private int uid = -1;
     private boolean doSerialize = true;
     private boolean isDead = false;
@@ -128,5 +128,9 @@ public class Entity {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

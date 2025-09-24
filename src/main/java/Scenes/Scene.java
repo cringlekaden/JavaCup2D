@@ -53,6 +53,8 @@ public class Scene {
 
     public void update(float dt) {
         camera.setProjection();
+        // Ensure inverse view is current before any world-space calculations during update
+        camera.getView();
         physics2D.update(dt);
         for(int i = 0; i < entities.size(); i++) {
             Entity entity = entities.get(i);
@@ -68,6 +70,8 @@ public class Scene {
 
     public void editorUpdate(float dt) {
         camera.setProjection();
+        // Ensure inverse view is current before any world-space calculations during editor update
+        camera.getView();
         for(int i = 0; i < entities.size(); i++) {
             Entity entity = entities.get(i);
             entity.editorUpdate(dt);

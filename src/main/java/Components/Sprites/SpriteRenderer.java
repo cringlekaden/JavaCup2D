@@ -4,6 +4,7 @@ import Components.Component;
 import Components.Transform;
 import Editor.JCImGui;
 import Rendering.Texture;
+import Util.AssetPool;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -16,6 +17,8 @@ public class SpriteRenderer extends Component {
 
     @Override
     public void start() {
+        if(sprite.getTexture() != null)
+            sprite.setTexture(AssetPool.getTexture(sprite.getTexture().getFilename()));
         lastTransform = entity.transform.copy();
     }
 

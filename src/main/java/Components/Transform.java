@@ -39,6 +39,7 @@ public class Transform extends Component {
 
     @Override
     public void imgui() {
+        entity.setName(JCImGui.drawTextControl("Name: ", entity.getName()));
         JCImGui.drawVec2Control("Position", position);
         JCImGui.drawVec2Control("Scale", scale, 32);
         rotation = JCImGui.drawFloatControl("Rotation", rotation);

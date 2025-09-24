@@ -25,11 +25,11 @@ public class EditorCamera extends Component {
     @Override
     public void editorUpdate(float dt) {
         if(MouseListener.mouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT) && dragDebounce > 0) {
-            clickOrigin = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+            clickOrigin = new Vector2f(MouseListener.getWorldX(), MouseListener.getWorldY());
             dragDebounce -= dt;
             return;
         } else if(MouseListener.mouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            Vector2f currentPosition = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+            Vector2f currentPosition = new Vector2f(MouseListener.getWorldX(), MouseListener.getWorldY());
             Vector2f delta = new Vector2f(currentPosition).sub(clickOrigin);
             camera.getPosition().sub(delta.mul(dt).mul(dragSensitivity));
             clickOrigin.lerp(currentPosition, dt);

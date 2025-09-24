@@ -39,7 +39,7 @@ public class AssetPool {
             spritesheets.put(name, spritesheet);
     }
 
-    public static Spritesheet getSpriteSheet(String name) {
+    public static Spritesheet getSpritesheet(String name) {
         if(spritesheets.containsKey(name))
             return spritesheets.get(name);
         else

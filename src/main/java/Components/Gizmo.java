@@ -56,6 +56,8 @@ public class Gizmo extends Component {
     public void update(float dt) {
         if(using)
             setInactive();
+        xAxisEntity.getComponent(SpriteRenderer.class).setColor(new Vector4f(0, 0, 0, 0));
+        yAxisEntity.getComponent(SpriteRenderer.class).setColor(new Vector4f(0, 0, 0, 0));
     }
 
     @Override
@@ -108,7 +110,7 @@ public class Gizmo extends Component {
     }
 
     private boolean checkXHoverState() {
-        Vector2f mousePosition = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+        Vector2f mousePosition = new Vector2f(MouseListener.getWorldX(), MouseListener.getWorldY());
         if(mousePosition.x <= xAxisEntity.transform.position.x + (gizmoHeight / 2.0f) &&
                 mousePosition.x >= xAxisEntity.transform.position.x - (gizmoWidth / 2.0f) &&
                 mousePosition.y >= xAxisEntity.transform.position.y - (gizmoHeight / 2.0f) &&
@@ -121,7 +123,7 @@ public class Gizmo extends Component {
     }
 
     private boolean checkYHoverState() {
-        Vector2f mousePosition = new Vector2f(MouseListener.getOrthoX(), MouseListener.getOrthoY());
+        Vector2f mousePosition = new Vector2f(MouseListener.getWorldX(), MouseListener.getWorldY());
         if(mousePosition.x <= yAxisEntity.transform.position.x + (gizmoWidth / 2.0f) &&
                 mousePosition.x >= yAxisEntity.transform.position.x - (gizmoWidth / 2.0f) &&
                 mousePosition.y <= yAxisEntity.transform.position.y + (gizmoHeight / 2.0f) &&

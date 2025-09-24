@@ -15,7 +15,7 @@ public class MouseListener {
 
     private final Vector2f gameViewportPosition;
     private final Vector2f gameViewportSize;
-    private double scrollX, scrollY, x, y, lastX, lastY, worldX, worldY, lastWorldX, lastWorldY;
+    private double scrollX, scrollY, x, y, worldX, worldY;
     private int mouseButtonsDown = 0;
     private final boolean[] mouseButtonPressed;
     private boolean isDragging;
@@ -26,8 +26,6 @@ public class MouseListener {
         scrollY = 0.0;
         x = 0.0;
         y = 0.0;
-        lastX = 0.0;
-        lastY = 0.0;
         gameViewportPosition = new Vector2f();
         gameViewportSize = new Vector2f();
     }
@@ -35,14 +33,8 @@ public class MouseListener {
     public static void mousePositionCallback(long window, double x, double y) {
         if(getInstance().mouseButtonsDown > 0)
             getInstance().isDragging = true;
-        getInstance().lastX = getInstance().x;
-        getInstance().lastY = getInstance().y;
-        getInstance().lastWorldX = getInstance().worldX;
-        getInstance().lastWorldY = getInstance().worldY;
         getInstance().x = x;
         getInstance().y = y;
-        calcOrthoX();
-        calcOrthoY();
     }
 
     public static void mouseButtonCallback(long window, int button, int action, int mods) {
@@ -60,59 +52,33 @@ public class MouseListener {
         getInstance().scrollY = yOffset;
     }
 
-    public static void endFrame() {
-        getInstance().scrollX = 0;
-        getInstance().scrollY = 0;
-        getInstance().lastX = getInstance().x;
-        getInstance().lastY = getInstance().y;
-        getInstance().lastWorldX = getInstance().worldX;
-        getInstance().lastWorldY = getInstance().worldY;
-    }
-
     public static float getX() {
-        return (float) getInstance().x;
+        // Use ImGui's mouse position, which shares the same coordinate space as ImGui.getWindowPos()
+        return ImGui.getMousePosX();
     }
 
     public static float getY() {
-        return (float) getInstance().y;
-    }
-
-    public static float getOrthoX() {
-        return (float)getInstance().worldX;
-    }
-
-    public static float getOrthoY() {
-        return (float)getInstance().worldY;
+        return ImGui.getMousePosY();
     }
 
     public static float getScreenX() {
-        float currentX = getX() - getInstance().gameViewportPosition.x;
-        // Map from viewport space to picking framebuffer resolution (matches Window's FBO size)
-        currentX = currentX / getInstance().gameViewportSize.x * 2560.0f;
-        return currentX;
+        return getScreen().x;
     }
 
     public static float getScreenY() {
+        return getScreen().y;
+    }
+
+    public static Vector2f getScreen() {
+        float currentX = getX() - getInstance().gameViewportPosition.x;
+        // Map from viewport space to picking framebuffer resolution (matches Window's FBO size)
+        float fbWidth = Window.getFramebuffer().getWidth();
+        float fbHeight = Window.getFramebuffer().getHeight();
+        currentX = currentX / getInstance().gameViewportSize.x * fbWidth;
         float currentY = getY() - getInstance().gameViewportPosition.y;
         // Flip Y for OpenGL origin and map to picking framebuffer resolution
-        currentY = 1440.0f - (currentY / getInstance().gameViewportSize.y * 1440.0f);
-        return currentY;
-    }
-
-    public static float getDX() {
-        return (float) (getInstance().lastX - getInstance().x);
-    }
-
-    public static float getDY() {
-        return (float) (getInstance().lastY - getInstance().y);
-    }
-
-    public static float getWorldDX() {
-        return (float) (getInstance().lastWorldX - getInstance().worldX);
-    }
-
-    public static float getWorldDY() {
-        return (float) (getInstance().lastWorldY - getInstance().worldY);
+        currentY = fbHeight - (currentY / getInstance().gameViewportSize.y * fbHeight);
+        return new Vector2f(currentX, currentY);
     }
 
     public static float getScrollX() {
@@ -125,6 +91,14 @@ public class MouseListener {
         if (ImGui.getIO().getWantCaptureMouse() && !GameViewWindow.isHovered())
             return 0.0f;
         return (float) getInstance().scrollY;
+    }
+
+    public static float getWorldX() {
+        return getWorld().x;
+    }
+
+    public static float getWorldY() {
+        return getWorld().y;
     }
 
     public static boolean isDragging() {
@@ -151,23 +125,21 @@ public class MouseListener {
         return instance;
     }
 
-    private static void calcOrthoX() {
+    public static Vector2f getWorld() {
         float currentX = getX() - getInstance().gameViewportPosition.x;
         currentX = currentX / getInstance().gameViewportSize.x * 2.0f - 1.0f;
-        Vector4f temp = new Vector4f(currentX, 0, 0, 1);
-        Matrix4f view = new Matrix4f();
-        Window.getScene().getCamera().getInverseView().mul(Window.getScene().getCamera().getInverseProjection(), view);
-        temp.mul(view);
-        getInstance().worldX = temp.x;
-    }
-
-    private static void calcOrthoY() {
         float currentY = getY() - getInstance().gameViewportPosition.y;
         currentY = -(currentY / getInstance().gameViewportSize.y * 2.0f - 1.0f);
-        Vector4f temp = new Vector4f(0, currentY, 0, 1);
-        Matrix4f view = new Matrix4f();
-        Window.getScene().getCamera().getInverseView().mul(Window.getScene().getCamera().getInverseProjection(), view);
-        temp.mul(view);
-        getInstance().worldY = temp.y;
+        Vector4f temp = new Vector4f(currentX, currentY, 0, 1);
+        Camera camera = Window.getScene().getCamera();
+        Matrix4f inverseProjection = new Matrix4f(camera.getInverseProjection());
+        Matrix4f inverseView = new Matrix4f(camera.getInverseView());
+        // Unproject from NDC to world: apply inverse projection first, then inverse view
+        temp.mul(inverseProjection);
+        temp.mul(inverseView);
+        if (temp.w != 0.0f) {
+            temp.div(temp.w);
+        }
+        return new Vector2f(temp.x, temp.y);
     }
 }

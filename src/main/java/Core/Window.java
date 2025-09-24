@@ -143,7 +143,6 @@ public class Window implements Observer {
             endTime = (float)glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
-            MouseListener.endFrame();
         }
         imGuiLayer.destroyImGui();
         glfwFreeCallbacks(windowPointer);

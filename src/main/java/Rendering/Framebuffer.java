@@ -6,8 +6,12 @@ public class Framebuffer {
 
     private final Texture texture;
     private final int fboID;
+    private final int width;
+    private final int height;
 
     public Framebuffer(int width, int height) {
+        this.width = width;
+        this.height = height;
         fboID = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
         texture = new Texture(width, height);
@@ -34,5 +38,13 @@ public class Framebuffer {
 
     public int getTextureID() {
         return texture.getTextureID();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

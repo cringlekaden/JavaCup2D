@@ -25,7 +25,7 @@ public class PropertiesWindow {
     public void update(float dt, Scene currentScene) {
         debounceTime -= dt;
         // Read pixel after rendering to the picking framebuffer
-        if(MouseListener.mouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && debounceTime < 0) {
+        if(!MouseListener.isDragging() && MouseListener.mouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT) && debounceTime < 0) {
             int x = (int)MouseListener.getScreenX();
             int y = (int)MouseListener.getScreenY();
             int entityID = pickingTexture.readPixel(x, y);
@@ -68,5 +68,9 @@ public class PropertiesWindow {
 
     public Entity getCurrentEntity() {
         return currentEntity;
+    }
+
+    public PickingTexture getPickingTexture() {
+        return pickingTexture;
     }
 }
