@@ -1,5 +1,6 @@
 package Scenes;
 
+import Audio.Track;
 import Components.*;
 import Components.Animations.StateMachine;
 import Components.Sprites.Sprite;
@@ -10,6 +11,9 @@ import Util.AssetPool;
 import imgui.ImGui;
 import imgui.ImVec2;
 import org.joml.Vector2f;
+
+import java.io.File;
+import java.util.Collection;
 
 public class LevelEditorInitializer extends SceneInitializer {
 
@@ -25,6 +29,10 @@ public class LevelEditorInitializer extends SceneInitializer {
         AssetPool.addSpritesheet("spritesheet.png", new Spritesheet(AssetPool.getTexture("spritesheet.png"), 16, 16, 26, 0));
         AssetPool.addSpritesheet("items.png", new Spritesheet(AssetPool.getTexture("items.png"), 16, 16, 43, 0));
         AssetPool.addSpritesheet("gizmos.png", new Spritesheet(AssetPool.getTexture("gizmos.png"), 24, 48, 3, 0));
+        File audioFolder = new File("./assets/audio");
+        File[] audioFiles = audioFolder.listFiles();
+        for(File file : audioFiles)
+            AssetPool.addTrack(file.getName(), false);
         for(Entity e : scene.getEntities()) {
             if(e.getComponent(SpriteRenderer.class) != null) {
                 SpriteRenderer spriteRenderer = e.getComponent(SpriteRenderer.class);
@@ -56,9 +64,7 @@ public class LevelEditorInitializer extends SceneInitializer {
         ImGui.begin("Level Editor Stuff");
         levelEditorStuff.imgui();
         ImGui.end();
-
         ImGui.begin("Test window");
-
         if (ImGui.beginTabBar("WindowTabBar")) {
             if (ImGui.beginTabItem("Blocks")) {
                 ImVec2 windowPos = new ImVec2();
@@ -109,6 +115,20 @@ public class LevelEditorInitializer extends SceneInitializer {
                 if (ImGui.imageButton("imageButton" + id, id, spriteWidth, spriteHeight, texCoords[2].x, texCoords[0].y, texCoords[0].x, texCoords[2].y)) {
                     Entity entity = Prefabs.generateQuestionBlock();
                     levelEditorStuff.getComponent(MouseControls.class).pickupEntity(entity);
+                }
+                ImGui.endTabItem();
+            }
+            if(ImGui.beginTabItem("Tracks")) {
+                Collection<Track> tracks = AssetPool.getAllTracks();
+                for(Track track : tracks) {
+                    if(ImGui.button(track.getFilename())) {
+                        if(!track.isPlaying())
+                            track.play();
+                        else
+                            track.stop();
+                    }
+                    if(ImGui.getContentRegionAvailX() > 100)
+                        ImGui.sameLine();
                 }
                 ImGui.endTabItem();
             }

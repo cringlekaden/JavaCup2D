@@ -11,10 +11,15 @@ import Scenes.SceneInitializer;
 import Util.AssetPool;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -29,7 +34,7 @@ public class Window implements Observer {
     private final String title;
     private final int width;
     private final int height;
-    private final long windowPointer;
+    private final long windowPointer, audioContext, audioDevice;
     private boolean isSceneRunning = false;
 
     private Window() {
@@ -66,6 +71,15 @@ public class Window implements Observer {
         glfwMakeContextCurrent(windowPointer);
         glfwSwapInterval(1);
         glfwShowWindow(windowPointer);
+        String defaultAudioDevice = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        audioDevice = alcOpenDevice(defaultAudioDevice);
+        int[] attributes = {0};
+        audioContext = alcCreateContext(audioDevice, attributes);
+        alcMakeContextCurrent(audioContext);
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(audioDevice);
+        ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+        if(!alCapabilities.OpenAL10)
+            assert false : "OpenAL not supported...";
         GL.createCapabilities();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -145,6 +159,8 @@ public class Window implements Observer {
             beginTime = endTime;
         }
         imGuiLayer.destroyImGui();
+        alcDestroyContext(audioContext);
+        alcCloseDevice(audioDevice);
         glfwFreeCallbacks(windowPointer);
         glfwDestroyWindow(windowPointer);
         glfwTerminate();

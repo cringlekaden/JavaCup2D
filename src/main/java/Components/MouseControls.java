@@ -17,8 +17,6 @@ import static org.lwjgl.glfw.GLFW.*;
 public class MouseControls extends Component {
 
     private Entity holdingEntity = null;
-    private float debounceTime = 0.05f;
-    private float debounce = debounceTime;
 
     // Track which grid cells have been placed during the current mouse press
     private final Set<Long> placedCells = new HashSet<>();
@@ -46,7 +44,6 @@ public class MouseControls extends Component {
 
     @Override
     public void editorUpdate(float dt) {
-        debounce -= dt;
         if(holdingEntity != null) {
             float x = MouseListener.getWorldX();
             float y = MouseListener.getWorldY();
@@ -81,14 +78,13 @@ public class MouseControls extends Component {
         float targetCenterX = (cellX + 0.5f) * Settings.GRID_WIDTH;
         float targetCenterY = (cellY + 0.5f) * Settings.GRID_HEIGHT;
         final float epsilon = 0.0001f;
-        for (Core.Entity e : Window.getScene().getEntities()) {
+        for (Entity e : Window.getScene().getEntities()) {
             if (e == holdingEntity) continue;
             if (e.getComponent(NonPickable.class) != null) continue;
             float ex = e.transform.position.x;
             float ey = e.transform.position.y;
-            if (Math.abs(ex - targetCenterX) <= epsilon && Math.abs(ey - targetCenterY) <= epsilon) {
+            if (Math.abs(ex - targetCenterX) <= epsilon && Math.abs(ey - targetCenterY) <= epsilon)
                 return true;
-            }
         }
         return false;
     }
